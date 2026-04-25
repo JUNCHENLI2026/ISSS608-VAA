@@ -1,0 +1,18 @@
+---
+title: "In-class Exercise 2"
+author: "JUNCHEN LI"
+date: "april 25,2026"
+date-modified: "last-modified"
+format: html
+editor: visual
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: auto
+---
+
+
+
+
+
