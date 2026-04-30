@@ -35,6 +35,41 @@
     "text": "4.4.2 Building an animated bubble plot: plot_ly() method\n\nEx plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\nbp &lt;- globalPop %&gt;%\n  plot_ly(x = ~Old, \n          y = ~Young, \n          size = ~Population, \n          color = ~Continent,\n          sizes = c(2, 100),\n          frame = ~Year, \n          text = ~Country, \n          hoverinfo = \"text\",\n          type = 'scatter',\n          mode = 'markers'\n          ) %&gt;%\n  layout(showlegend = FALSE)\nbp\n\n\n\n\n\nSelf-Trying plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\nbp &lt;- globalPop %&gt;%\n  plot_ly(x = ~Old, \n          y = ~Young, \n          size = ~Population, \n          color = ~Continent,\n          sizes = c(4, 100),\n          frame = ~Year, \n          text = ~Country, \n          hoverinfo = \"text\",\n          type = 'scatter',\n          mode = 'markers'\n          ) %&gt;%\n  layout(showlegend = FALSE)\nbp"
   },
   {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#section",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#section",
+    "title": "Hands-on_Ex0302",
+    "section": "=======",
+    "text": "=======\ntitle: “Hands-on_Ex0302” author: “JUNCHEN LI” date: “april 30,2026” date-modified: “last-modified” format: html editor: visual execute: eval: true echo: true warning: false freeze: auto —\n\n4.2.1 Loading the R packages4.2.2 Importing the data\n\n\n\npacman::p_load(readxl, gifski, gapminder,\n               plotly, gganimate, tidyverse)\n\n\n\n\ncol &lt;- c(\"Country\", \"Continent\")\nglobalPop &lt;- read_xls(\"data/GlobalPopulation.xls\",\n                      sheet=\"Data\") %&gt;%\n  mutate(across(col, as.factor)) %&gt;%\n  mutate(Year = as.integer(Year))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-a-static-population-bubble-plot-1",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-a-static-population-bubble-plot-1",
+    "title": "Hands-on_Ex0302",
+    "section": "4.3.1 Building a static population bubble plot",
+    "text": "4.3.1 Building a static population bubble plot\n\nEx plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(globalPop, aes(x = Old, y = Young, \n                      size = Population, \n                      colour = Country)) +\n  geom_point(alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(title = 'Year: {frame_time}', \n       x = '% Aged', \n       y = '% Young') \n\n\n\n\n\nSelf Trying plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(globalPop, aes(x = Old, y = Young, \n                      size = Population, \n                      colour = Continent)) +\n  geom_point(alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = continent_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(title = 'Year: {frame_time}', \n       x = '% Aged', \n       y = '% Young')"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-the-animated-bubble-plot-1",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-the-animated-bubble-plot-1",
+    "title": "Hands-on_Ex0302",
+    "section": "4.3.2 Building the animated bubble plot",
+    "text": "4.3.2 Building the animated bubble plot\n\nEx plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(globalPop, aes(x = Old, y = Young, \n                      size = Population, \n                      colour = Country)) +\n  geom_point(alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(title = 'Year: {frame_time}', \n       x = '% Aged', \n       y = '% Young') +\n  transition_time(Year) +       \n  ease_aes('linear')          \n\n\n\n\n\nSelf Trying plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(globalPop, aes(x = Old, y = Young, \n                      size = Population, \n                      colour = Continent)) +\n  geom_point(alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = continent_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(title = 'Year: {frame_time}', \n       x = '% Aged', \n       y = '% Young') +\n  transition_time(Year) +       \n  ease_aes('linear')"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-an-animated-bubble-plot-ggplotly-method-1",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-an-animated-bubble-plot-ggplotly-method-1",
+    "title": "Hands-on_Ex0302",
+    "section": "4.4.1 Building an animated bubble plot: ggplotly() method",
+    "text": "4.4.1 Building an animated bubble plot: ggplotly() method\n\nEx plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\ngg &lt;- ggplot(globalPop, \n       aes(x = Old, \n           y = Young, \n           size = Population, \n           colour = Country)) +\n  geom_point(aes(size = Population,\n                 frame = Year),\n             alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(x = '% Aged', \n       y = '% Young')\n\nggplotly(gg)\n\n\n\n\n\nSelf-trying plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\ngg &lt;- ggplot(globalPop, \n       aes(x = Old, \n           y = Young, \n           size = Population, \n           colour = Continent)) +\n  geom_point(aes(size = Population,\n                 frame = Year),\n             alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = continent_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(x = '% Aged', \n       y = '% Young')\n\nggplotly(gg)\n\n\n\n\n\nEx plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\ngg &lt;- ggplot(globalPop, \n       aes(x = Old, \n           y = Young, \n           size = Population, \n           colour = Country)) +\n  geom_point(aes(size = Population,\n                 frame = Year),\n             alpha = 0.7) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(x = '% Aged', \n       y = '% Young') + \n  theme(legend.position='none')\n\nggplotly(gg)\n\n\n\n\n\nSelf Trying plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\ngg &lt;- ggplot(globalPop, \n       aes(x = Old, \n           y = Young, \n           size = Population, \n           colour = Continent)) +\n  geom_point(aes(size = Population,\n                 frame = Year),\n             alpha = 0.7) +\n  scale_colour_manual(values = continent_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(x = '% Aged', \n       y = '% Young') + \n  theme(legend.position='none')\n\nggplotly(gg)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-an-animated-bubble-plot-plot_ly-method-1",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-an-animated-bubble-plot-plot_ly-method-1",
+    "title": "Hands-on_Ex0302",
+    "section": "4.4.2 Building an animated bubble plot: plot_ly() method",
+    "text": "4.4.2 Building an animated bubble plot: plot_ly() method\n\nEx plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\nbp &lt;- globalPop %&gt;%\n  plot_ly(x = ~Old, \n          y = ~Young, \n          size = ~Population, \n          color = ~Continent,\n          sizes = c(2, 100),\n          frame = ~Year, \n          text = ~Country, \n          hoverinfo = \"text\",\n          type = 'scatter',\n          mode = 'markers'\n          ) %&gt;%\n  layout(showlegend = FALSE)\nbp\n\n\n\n\n\nSelf-Trying plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\nbp &lt;- globalPop %&gt;%\n  plot_ly(x = ~Old, \n          y = ~Young, \n          size = ~Population, \n          color = ~Continent,\n          sizes = c(4, 100),\n          frame = ~Year, \n          text = ~Country, \n          hoverinfo = \"text\",\n          type = 'scatter',\n          mode = 'markers'\n          ) %&gt;%\n  layout(showlegend = FALSE)\nbp\n\n\n\n\n\n\n\n\n\n\n\n3e2f93256cdd15a1ebf1a26a03666eba492fff68"
+  },
+  {
     "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
     "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
     "title": "Hands-on-Exercise 2",
