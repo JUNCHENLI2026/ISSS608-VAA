@@ -28,8 +28,8 @@ pacman::p_load(ggrepel, patchwork,
 ```{r}
 exam_data <- read_csv("data/Exam_data.csv")
 ```
-
 :::
+
 ## Beyond ggplot2 Annotation: ggrepel
 
 ```{r}
@@ -181,8 +181,3 @@ p3 + inset_element(p2,
 patchwork <- (p1 / p2) | p3
 patchwork & theme_economist()
 ```
-
-
-
-
-
