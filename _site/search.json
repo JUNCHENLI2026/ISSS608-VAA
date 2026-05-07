@@ -35,41 +35,6 @@
     "text": "4.4.2 Building an animated bubble plot: plot_ly() method\n\nEx plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\nbp &lt;- globalPop %&gt;%\n  plot_ly(x = ~Old, \n          y = ~Young, \n          size = ~Population, \n          color = ~Continent,\n          sizes = c(2, 100),\n          frame = ~Year, \n          text = ~Country, \n          hoverinfo = \"text\",\n          type = 'scatter',\n          mode = 'markers'\n          ) %&gt;%\n  layout(showlegend = FALSE)\nbp\n\n\n\n\n\nSelf-Trying plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\nbp &lt;- globalPop %&gt;%\n  plot_ly(x = ~Old, \n          y = ~Young, \n          size = ~Population, \n          color = ~Continent,\n          sizes = c(4, 100),\n          frame = ~Year, \n          text = ~Country, \n          hoverinfo = \"text\",\n          type = 'scatter',\n          mode = 'markers'\n          ) %&gt;%\n  layout(showlegend = FALSE)\nbp"
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#section",
-    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#section",
-    "title": "Hands-on_Ex0302",
-    "section": "=======",
-    "text": "=======\ntitle: “Hands-on_Ex0302” author: “JUNCHEN LI” date: “april 30,2026” date-modified: “last-modified” format: html editor: visual execute: eval: true echo: true warning: false freeze: auto —\n\n4.2.1 Loading the R packages4.2.2 Importing the data\n\n\n\npacman::p_load(readxl, gifski, gapminder,\n               plotly, gganimate, tidyverse)\n\n\n\n\ncol &lt;- c(\"Country\", \"Continent\")\nglobalPop &lt;- read_xls(\"data/GlobalPopulation.xls\",\n                      sheet=\"Data\") %&gt;%\n  mutate(across(col, as.factor)) %&gt;%\n  mutate(Year = as.integer(Year))"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-a-static-population-bubble-plot-1",
-    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-a-static-population-bubble-plot-1",
-    "title": "Hands-on_Ex0302",
-    "section": "4.3.1 Building a static population bubble plot",
-    "text": "4.3.1 Building a static population bubble plot\n\nEx plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(globalPop, aes(x = Old, y = Young, \n                      size = Population, \n                      colour = Country)) +\n  geom_point(alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(title = 'Year: {frame_time}', \n       x = '% Aged', \n       y = '% Young') \n\n\n\n\n\nSelf Trying plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(globalPop, aes(x = Old, y = Young, \n                      size = Population, \n                      colour = Continent)) +\n  geom_point(alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = continent_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(title = 'Year: {frame_time}', \n       x = '% Aged', \n       y = '% Young')"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-the-animated-bubble-plot-1",
-    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-the-animated-bubble-plot-1",
-    "title": "Hands-on_Ex0302",
-    "section": "4.3.2 Building the animated bubble plot",
-    "text": "4.3.2 Building the animated bubble plot\n\nEx plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(globalPop, aes(x = Old, y = Young, \n                      size = Population, \n                      colour = Country)) +\n  geom_point(alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(title = 'Year: {frame_time}', \n       x = '% Aged', \n       y = '% Young') +\n  transition_time(Year) +       \n  ease_aes('linear')          \n\n\n\n\n\nSelf Trying plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(globalPop, aes(x = Old, y = Young, \n                      size = Population, \n                      colour = Continent)) +\n  geom_point(alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = continent_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(title = 'Year: {frame_time}', \n       x = '% Aged', \n       y = '% Young') +\n  transition_time(Year) +       \n  ease_aes('linear')"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-an-animated-bubble-plot-ggplotly-method-1",
-    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-an-animated-bubble-plot-ggplotly-method-1",
-    "title": "Hands-on_Ex0302",
-    "section": "4.4.1 Building an animated bubble plot: ggplotly() method",
-    "text": "4.4.1 Building an animated bubble plot: ggplotly() method\n\nEx plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\ngg &lt;- ggplot(globalPop, \n       aes(x = Old, \n           y = Young, \n           size = Population, \n           colour = Country)) +\n  geom_point(aes(size = Population,\n                 frame = Year),\n             alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(x = '% Aged', \n       y = '% Young')\n\nggplotly(gg)\n\n\n\n\n\nSelf-trying plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\ngg &lt;- ggplot(globalPop, \n       aes(x = Old, \n           y = Young, \n           size = Population, \n           colour = Continent)) +\n  geom_point(aes(size = Population,\n                 frame = Year),\n             alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = continent_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(x = '% Aged', \n       y = '% Young')\n\nggplotly(gg)\n\n\n\n\n\nEx plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\ngg &lt;- ggplot(globalPop, \n       aes(x = Old, \n           y = Young, \n           size = Population, \n           colour = Country)) +\n  geom_point(aes(size = Population,\n                 frame = Year),\n             alpha = 0.7) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(x = '% Aged', \n       y = '% Young') + \n  theme(legend.position='none')\n\nggplotly(gg)\n\n\n\n\n\nSelf Trying plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\ngg &lt;- ggplot(globalPop, \n       aes(x = Old, \n           y = Young, \n           size = Population, \n           colour = Continent)) +\n  geom_point(aes(size = Population,\n                 frame = Year),\n             alpha = 0.7) +\n  scale_colour_manual(values = continent_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(x = '% Aged', \n       y = '% Young') + \n  theme(legend.position='none')\n\nggplotly(gg)"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-an-animated-bubble-plot-plot_ly-method-1",
-    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex0302.html#building-an-animated-bubble-plot-plot_ly-method-1",
-    "title": "Hands-on_Ex0302",
-    "section": "4.4.2 Building an animated bubble plot: plot_ly() method",
-    "text": "4.4.2 Building an animated bubble plot: plot_ly() method\n\nEx plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\nbp &lt;- globalPop %&gt;%\n  plot_ly(x = ~Old, \n          y = ~Young, \n          size = ~Population, \n          color = ~Continent,\n          sizes = c(2, 100),\n          frame = ~Year, \n          text = ~Country, \n          hoverinfo = \"text\",\n          type = 'scatter',\n          mode = 'markers'\n          ) %&gt;%\n  layout(showlegend = FALSE)\nbp\n\n\n\n\n\nSelf-Trying plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\nbp &lt;- globalPop %&gt;%\n  plot_ly(x = ~Old, \n          y = ~Young, \n          size = ~Population, \n          color = ~Continent,\n          sizes = c(4, 100),\n          frame = ~Year, \n          text = ~Country, \n          hoverinfo = \"text\",\n          type = 'scatter',\n          mode = 'markers'\n          ) %&gt;%\n  layout(showlegend = FALSE)\nbp\n\n\n\n\n\n\n\n\n\n\n\n3e2f93256cdd15a1ebf1a26a03666eba492fff68"
-  },
-  {
     "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
     "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
     "title": "Hands-on-Exercise 2",
@@ -362,5 +327,145 @@
     "title": "Hands-on_Ex0301",
     "section": "3.8.2 Linked brushing: crosstalk method",
     "text": "3.8.2 Linked brushing: crosstalk method\n\nEx plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nd &lt;- highlight_key(exam_data) \np &lt;- ggplot(d, \n            aes(ENGLISH, \n                MATHS)) + \n  geom_point(size=1) +\n  coord_cartesian(xlim=c(0,100),\n                  ylim=c(0,100))\n\ngg &lt;- highlight(ggplotly(p),        \n                \"plotly_selected\")  \n\ncrosstalk::bscols(gg,               \n                  DT::datatable(d), \n                  widths = 5)  \n\n\n\n\n\nSelf Trying plotCode chunk\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nd &lt;- highlight_key(exam_data) \np &lt;- ggplot(d, \n            aes(SCIENCE, \n                MATHS)) + \n  geom_point(size=1) +\n  coord_cartesian(xlim=c(0,100),\n                  ylim=c(0,100))\n\ngg &lt;- highlight(ggplotly(p),        \n                \"plotly_selected\")  \n\ncrosstalk::bscols(gg,               \n                  DT::datatable(d), \n                  widths = 5)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html",
+    "title": "Hands_on_Ex0401",
+    "section": "",
+    "text": "pacman::p_load(ggdist, ggridges, ggthemes,\n               colorspace, tidyverse)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#getting-started",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#getting-started",
+    "title": "Hands_on_Ex0401",
+    "section": "",
+    "text": "pacman::p_load(ggdist, ggridges, ggthemes,\n               colorspace, tidyverse)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#data-import",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#data-import",
+    "title": "Hands_on_Ex0401",
+    "section": "9.2.2 Data import",
+    "text": "9.2.2 Data import\n\nexam &lt;- read_csv(\"data/Exam_data.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#plotting-ridgeline-graph-ggridges-method",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#plotting-ridgeline-graph-ggridges-method",
+    "title": "Hands_on_Ex0401",
+    "section": "9.3.1 Plotting ridgeline graph: ggridges method",
+    "text": "9.3.1 Plotting ridgeline graph: ggridges method\n\nThe Ex plotThe Ex Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = ENGLISH, \n           y = CLASS)) +\n  geom_density_ridges(\n    scale = 3,\n    rel_min_height = 0.01,\n    bandwidth = 3.4,\n    fill = lighten(\"#7097BB\", .3),\n    color = \"white\"\n  ) +\n  scale_x_continuous(\n    name = \"English grades\",\n    expand = c(0, 0)\n    ) +\n  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying",
+    "title": "Hands_on_Ex0401",
+    "section": "Self Trying",
+    "text": "Self Trying\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = SCIENCE, \n           y = CLASS)) +\n  geom_density_ridges(\n    scale = 3,\n    rel_min_height = 0.01,\n    bandwidth = 3.4,\n    fill = lighten(\"#7097BB\", .3),\n    color = \"green\"\n  ) +\n  scale_x_continuous(\n    name = \"Science grades\",\n    expand = c(0, 0)\n    ) +\n  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#varying-fill-colors-along-the-x-axis",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#varying-fill-colors-along-the-x-axis",
+    "title": "Hands_on_Ex0401",
+    "section": "9.3.2 Varying fill colors along the x axis",
+    "text": "9.3.2 Varying fill colors along the x axis\n\nThe Ex plotThe Ex Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = ENGLISH, \n           y = CLASS,\n           fill = stat(x))) +\n  geom_density_ridges_gradient(\n    scale = 3,\n    rel_min_height = 0.01) +\n  scale_fill_viridis_c(name = \"Temp. [F]\",\n                       option = \"C\") +\n  scale_x_continuous(\n    name = \"English grades\",\n    expand = c(0, 0)\n  ) +\n  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-1",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-1",
+    "title": "Hands_on_Ex0401",
+    "section": "Self Trying",
+    "text": "Self Trying\n\nThe PlotThe Code\n\n\n\nggplot(exam, \n       aes(x = MATHS, \n           y = CLASS,\n           fill = stat(x))) +\n  geom_density_ridges_gradient(\n    scale = 3,\n    rel_min_height = 0.01) +\n  scale_fill_viridis_c(name = \"Temp. [F]\",\n                       option = \"C\") +\n  scale_x_continuous(\n    name = \"Math grades\",\n    expand = c(0, 0)\n  ) +\n  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +\n  theme_ridges()\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = MATHS, \n           y = CLASS,\n           fill = stat(x))) +\n  geom_density_ridges_gradient(\n    scale = 3,\n    rel_min_height = 0.01) +\n  scale_fill_viridis_c(name = \"Temp. [F]\",\n                       option = \"C\") +\n  scale_x_continuous(\n    name = \"Math grades\",\n    expand = c(0, 0)\n  ) +\n  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#mapping-the-probabilities-directly-onto-colour",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#mapping-the-probabilities-directly-onto-colour",
+    "title": "Hands_on_Ex0401",
+    "section": "9.3.3 Mapping the probabilities directly onto colour",
+    "text": "9.3.3 Mapping the probabilities directly onto colour\n\nThe Ex plotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam,\n       aes(x = ENGLISH, \n           y = CLASS, \n           fill = 0.5 - abs(0.5-stat(ecdf)))) +\n  stat_density_ridges(geom = \"density_ridges_gradient\", \n                      calc_ecdf = TRUE) +\n  scale_fill_viridis_c(name = \"Tail probability\",\n                       direction = -1) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-2",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-2",
+    "title": "Hands_on_Ex0401",
+    "section": "Self Trying",
+    "text": "Self Trying\n\nThe plotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam,\n       aes(x = MATHS, \n           y = GENDER, \n           fill = 0.5 - abs(0.5-stat(ecdf)))) +\n  stat_density_ridges(geom = \"density_ridges_gradient\", \n                      calc_ecdf = TRUE) +\n  scale_fill_viridis_c(name = \"Tail probability\",\n                       direction = -1) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#ridgeline-plots-with-quantile-lines",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#ridgeline-plots-with-quantile-lines",
+    "title": "Hands_on_Ex0401",
+    "section": "9.3.4 Ridgeline plots with quantile lines",
+    "text": "9.3.4 Ridgeline plots with quantile lines\n\nThe Ex plotThe Ex Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam,\n       aes(x = ENGLISH, \n           y = CLASS, \n           fill = factor(stat(quantile))\n           )) +\n  stat_density_ridges(\n    geom = \"density_ridges_gradient\",\n    calc_ecdf = TRUE, \n    quantiles = 4,\n    quantile_lines = TRUE) +\n  scale_fill_viridis_d(name = \"Quartiles\") +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-3",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-3",
+    "title": "Hands_on_Ex0401",
+    "section": "Self Trying",
+    "text": "Self Trying\n\nThe plotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam,\n       aes(x = SCIENCE, \n           y = GENDER, \n           fill = factor(stat(quantile))\n           )) +\n  stat_density_ridges(\n    geom = \"density_ridges_gradient\",\n    calc_ecdf = TRUE, \n    quantiles = 4,\n    quantile_lines = TRUE) +\n  scale_fill_viridis_d(name = \"Quartiles\") +\n  theme_ridges()\n\n\n\n\n\nEx plotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam,\n       aes(x = ENGLISH, \n           y = CLASS, \n           fill = factor(stat(quantile))\n           )) +\n  stat_density_ridges(\n    geom = \"density_ridges_gradient\",\n    calc_ecdf = TRUE, \n    quantiles = c(0.025, 0.975)\n    ) +\n  scale_fill_manual(\n    name = \"Probability\",\n    values = c(\"#FF0000A0\", \"#A0A0A0A0\", \"#0000FFA0\"),\n    labels = c(\"(0, 0.025]\", \"(0.025, 0.975]\", \"(0.975, 1]\")\n  ) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-4",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-4",
+    "title": "Hands_on_Ex0401",
+    "section": "Self Trying",
+    "text": "Self Trying\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam,\n       aes(x = MATHS, \n           y = GENDER, \n           fill = factor(stat(quantile))\n           )) +\n  stat_density_ridges(\n    geom = \"density_ridges_gradient\",\n    calc_ecdf = TRUE, \n    quantiles = c(0.025, 0.975)\n    ) +\n  scale_fill_manual(\n    name = \"Probability\",\n    values = c(\"#FF0000A0\", \"#A0A0A0A0\", \"#0000FFA0\"),\n    labels = c(\"(0, 0.025]\", \"(0.025, 0.975]\", \"(0.975, 1]\")\n  ) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#plotting-a-half-eye-graph",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#plotting-a-half-eye-graph",
+    "title": "Hands_on_Ex0401",
+    "section": "9.4.1 Plotting a Half Eye graph",
+    "text": "9.4.1 Plotting a Half Eye graph\n\nThe plotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = ENGLISH)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-5",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-5",
+    "title": "Hands_on_Ex0401",
+    "section": "self-Trying",
+    "text": "self-Trying\n\nThe plotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = SCIENCE)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#adding-the-boxplot-with-geom_boxplot",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#adding-the-boxplot-with-geom_boxplot",
+    "title": "Hands_on_Ex0401",
+    "section": "9.4.2 Adding the boxplot with geom_boxplot()",
+    "text": "9.4.2 Adding the boxplot with geom_boxplot()\n\nThe Ex plotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = ENGLISH)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA) +\n  geom_boxplot(width = .20,\n               outlier.shape = NA)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-6",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-6",
+    "title": "Hands_on_Ex0401",
+    "section": "Self Trying",
+    "text": "Self Trying\n\nThe plotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = MATHS)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA) +\n  geom_boxplot(width = .20,\n               outlier.shape = NA)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#adding-the-dot-plots-with-stat_dots",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#adding-the-dot-plots-with-stat_dots",
+    "title": "Hands_on_Ex0401",
+    "section": "9.4.3 Adding the Dot Plots with stat_dots()",
+    "text": "9.4.3 Adding the Dot Plots with stat_dots()\n\nThe Ex plotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = ENGLISH)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA) +\n  geom_boxplot(width = .20,\n               outlier.shape = NA) +\n  stat_dots(side = \"left\", \n            justification = 1.2, \n            binwidth = .5,\n            dotsize = 2)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-7",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-7",
+    "title": "Hands_on_Ex0401",
+    "section": "Self Trying",
+    "text": "Self Trying\n\nThe plotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = GENDER, \n           y = MATHS)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA) +\n  geom_boxplot(width = .20,\n               outlier.shape = NA) +\n  stat_dots(side = \"left\", \n            justification = 1.2, \n            binwidth = .5,\n            dotsize = 2)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#finishing-touch",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#finishing-touch",
+    "title": "Hands_on_Ex0401",
+    "section": "9.4.4 Finishing touch",
+    "text": "9.4.4 Finishing touch\n\nEx plotEx Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = ENGLISH)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA) +\n  geom_boxplot(width = .20,\n               outlier.shape = NA) +\n  stat_dots(side = \"left\", \n            justification = 1.2, \n            binwidth = .5,\n            dotsize = 1.5) +\n  coord_flip() +\n  theme_economist()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-8",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands_on_Ex0401.html#self-trying-8",
+    "title": "Hands_on_Ex0401",
+    "section": "Self Trying",
+    "text": "Self Trying\n\nThe plotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = GENDER, \n           y = SCIENCE)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA) +\n  geom_boxplot(width = .20,\n               outlier.shape = NA) +\n  stat_dots(side = \"left\", \n            justification = 1.2, \n            binwidth = .5,\n            dotsize = 1.5) +\n  coord_flip() +\n  theme_economist()"
   }
 ]
