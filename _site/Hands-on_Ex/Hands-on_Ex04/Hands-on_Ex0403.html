@@ -194,6 +194,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex0403.html">
  <span class="dropdown-text">Hands-on Exercise 4(3)</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex0404.html">
+ <span class="dropdown-text">Hands-on Exercise 4(4)</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -242,6 +246,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#plotting-confidence-interval-of-point-estimates" id="toc-plotting-confidence-interval-of-point-estimates" class="nav-link" data-scroll-target="#plotting-confidence-interval-of-point-estimates">11.3.2 Plotting confidence interval of point estimates</a></li>
   <li><a href="#self-trying-2" id="toc-self-trying-2" class="nav-link" data-scroll-target="#self-trying-2">Self Trying</a></li>
   <li><a href="#visualizing-the-uncertainty-of-point-estimates-with-interactive-error-bars" id="toc-visualizing-the-uncertainty-of-point-estimates-with-interactive-error-bars" class="nav-link" data-scroll-target="#visualizing-the-uncertainty-of-point-estimates-with-interactive-error-bars">11.3.3 Visualizing the uncertainty of point estimates with interactive error bars</a></li>
+  <li><a href="#self-trying-3" id="toc-self-trying-3" class="nav-link" data-scroll-target="#self-trying-3">Self Trying</a></li>
+  <li><a href="#visualizing-the-uncertainty-of-point-estimates-ggdist-methods" id="toc-visualizing-the-uncertainty-of-point-estimates-ggdist-methods" class="nav-link" data-scroll-target="#visualizing-the-uncertainty-of-point-estimates-ggdist-methods">11.4.1 Visualizing the uncertainty of point estimates: ggdist methods</a></li>
+  <li><a href="#self-trying-4" id="toc-self-trying-4" class="nav-link" data-scroll-target="#self-trying-4">Self Trying</a></li>
+  <li><a href="#self-trying-5" id="toc-self-trying-5" class="nav-link" data-scroll-target="#self-trying-5">Self Trying</a></li>
+  <li><a href="#visualizing-the-uncertainty-of-point-estimates-ggdist-methods-1" id="toc-visualizing-the-uncertainty-of-point-estimates-ggdist-methods-1" class="nav-link" data-scroll-target="#visualizing-the-uncertainty-of-point-estimates-ggdist-methods-1">11.4.2 Visualizing the uncertainty of point estimates: ggdist methods</a></li>
+  <li><a href="#self-trying-6" id="toc-self-trying-6" class="nav-link" data-scroll-target="#self-trying-6">Self Trying</a></li>
+  <li><a href="#visualizing-the-uncertainty-of-point-estimates-ggdist-methods-2" id="toc-visualizing-the-uncertainty-of-point-estimates-ggdist-methods-2" class="nav-link" data-scroll-target="#visualizing-the-uncertainty-of-point-estimates-ggdist-methods-2">11.4.3 Visualizing the uncertainty of point estimates: ggdist methods</a></li>
+  <li><a href="#self-trying-7" id="toc-self-trying-7" class="nav-link" data-scroll-target="#self-trying-7">Self Trying</a></li>
+  <li><a href="#installing-ungeviz-package" id="toc-installing-ungeviz-package" class="nav-link" data-scroll-target="#installing-ungeviz-package">11.5.1 Installing ungeviz package</a></li>
+  <li><a href="#launch-the-application-in-r" id="toc-launch-the-application-in-r" class="nav-link" data-scroll-target="#launch-the-application-in-r">11.5.2 Launch the application in R</a></li>
+  <li><a href="#visualising-uncertainty-with-hypothetical-outcome-plots-hops" id="toc-visualising-uncertainty-with-hypothetical-outcome-plots-hops" class="nav-link" data-scroll-target="#visualising-uncertainty-with-hypothetical-outcome-plots-hops">11.5.3 Visualising Uncertainty with Hypothetical Outcome Plots (HOPs)</a></li>
+  <li><a href="#self-trying-8" id="toc-self-trying-8" class="nav-link" data-scroll-target="#self-trying-8">Self Trying</a></li>
   </ul>
 </nav>
     </div>
@@ -613,27 +629,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="visualizing-the-uncertainty-of-point-estimates-with-interactive-error-bars" class="level2">
 <h2 class="anchored" data-anchor-id="visualizing-the-uncertainty-of-point-estimates-with-interactive-error-bars">11.3.3 Visualizing the uncertainty of point estimates with interactive error bars</h2>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-17-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-1" role="tab" aria-controls="tabset-17-1" aria-selected="true" href="">The Ex plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-2" role="tab" aria-controls="tabset-17-2" aria-selected="false" href="">The Code</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-3" role="tab" aria-controls="tabset-17-3" aria-selected="false" href="">Self Trying</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-4" role="tab" aria-controls="tabset-17-4" aria-selected="false" href="">11.4.1 Visualizing the uncertainty of point estimates: ggdist methods</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-5" role="tab" aria-controls="tabset-17-5" aria-selected="false" href="">Self Trying</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-6" role="tab" aria-controls="tabset-17-6" aria-selected="false" href="">Self Trying</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-7" role="tab" aria-controls="tabset-17-7" aria-selected="false" href="">11.4.2 Visualizing the uncertainty of point estimates: ggdist methods</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-8-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-8" role="tab" aria-controls="tabset-17-8" aria-selected="false" href="">Self Trying</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-9-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-9" role="tab" aria-controls="tabset-17-9" aria-selected="false" href="">11.4.3 Visualizing the uncertainty of point estimates: ggdist methods</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-10-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-10" role="tab" aria-controls="tabset-17-10" aria-selected="false" href="">Self Trying</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-11-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-11" role="tab" aria-controls="tabset-17-11" aria-selected="false" href="">11.5.1 Installing ungeviz package</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-12-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-12" role="tab" aria-controls="tabset-17-12" aria-selected="false" href="">11.5.2 Launch the application in R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-13-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-13" role="tab" aria-controls="tabset-17-13" aria-selected="false" href="">11.5.3 Visualising Uncertainty with Hypothetical Outcome Plots (HOPs)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-14-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-14" role="tab" aria-controls="tabset-17-14" aria-selected="false" href="">Self Trying</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">The Ex plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
-<div id="tabset-17-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-17-1-tab">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <div class="cell">
 <div class="cell-output-display">
 <div class="container-fluid crosstalk-bscols">
 <div class="row">
 <div class="col-xs-4">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-9e9e729375a1f10c8ecd" style="width:100%;height:400px;"></div>
-<script type="application/json" data-for="htmlwidget-9e9e729375a1f10c8ecd">{"x":{"data":[{"x":[1,3,4,2],"y":[76.507772020725383,60.666666666666664,57.444444444444443,69.666666666666671],"text":"","key":["1","2","3","4"],"type":"scatter","mode":"lines","opacity":0.90000000000000002,"line":{"color":"transparent"},"error_y":{"array":[2.9214818033282057,18.165794029639137,5.2713960499886028,9.7819093228264933],"arrayminus":[2.9214818033282057,18.165794029639137,5.2713960499886028,9.7819093228265004],"type":"data","width":21.333333333333353,"symmetric":false,"color":"rgba(0,0,0,1)"},"set":"SharedDatacb2dbd9e","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","_isNestedKey":false,"frame":null},{"x":[1,3,4,2],"y":[76.507772020725383,60.666666666666664,57.444444444444443,69.666666666666671],"text":["Race: Chinese <br>N: 193 <br>Avg. Scores: 76.51 <br>95% CI:[ 73.59 , 79.43 ]","Race: Indian <br>N: 12 <br>Avg. Scores: 60.67 <br>95% CI:[ 42.5 , 78.83 ]","Race: Malay <br>N: 108 <br>Avg. Scores: 57.44 <br>95% CI:[ 52.17 , 62.72 ]","Race: Others <br>N: 9 <br>Avg. Scores: 69.67 <br>95% CI:[ 59.88 , 79.45 ]"],"key":["1","2","3","4"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(255,0,0,1)","opacity":1,"size":5.6692913385826778,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(255,0,0,1)"}},"hoveron":"points","set":"SharedDatacb2dbd9e","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","_isNestedKey":false,"frame":null}],"layout":{"margin":{"t":40.840182648401829,"r":7.3059360730593621,"b":47.923444344685095,"l":37.260273972602747},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"99% Confidence interval of average /<br>maths scores by race","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,4.5999999999999996],"tickmode":"array","ticktext":["Chinese","Others","Indian","Malay"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["Chinese","Others","Indian","Malay"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-45,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Race","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[40.653487469404247,81.295961157116452],"tickmode":"array","ticktext":["50","60","70","80"],"tickvals":[50,60,70,80],"categoryorder":"array","categoryarray":["50","60","70","80"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Average Scores","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative","dragmode":"zoom"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"2dd44a4713d6":{"x":{},"ymin":{},"ymax":{},"type":"scatter"},"2dd447094404":{"x":{},"y":{},"text":{}}},"cur_data":"2dd44a4713d6","visdat":{"2dd44a4713d6":["function (y) ","x"],"2dd447094404":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0,"ctGroups":["SharedDatacb2dbd9e"]},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-450b068cc92c16848e80" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-450b068cc92c16848e80">{"x":{"data":[{"x":[1,3,4,2],"y":[76.507772020725383,60.666666666666664,57.444444444444443,69.666666666666671],"text":"","key":["1","2","3","4"],"type":"scatter","mode":"lines","opacity":0.90000000000000002,"line":{"color":"transparent"},"error_y":{"array":[2.9214818033282057,18.165794029639137,5.2713960499886028,9.7819093228264933],"arrayminus":[2.9214818033282057,18.165794029639137,5.2713960499886028,9.7819093228265004],"type":"data","width":21.333333333333353,"symmetric":false,"color":"rgba(0,0,0,1)"},"set":"SharedData59892581","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","_isNestedKey":false,"frame":null},{"x":[1,3,4,2],"y":[76.507772020725383,60.666666666666664,57.444444444444443,69.666666666666671],"text":["Race: Chinese <br>N: 193 <br>Avg. Scores: 76.51 <br>95% CI:[ 73.59 , 79.43 ]","Race: Indian <br>N: 12 <br>Avg. Scores: 60.67 <br>95% CI:[ 42.5 , 78.83 ]","Race: Malay <br>N: 108 <br>Avg. Scores: 57.44 <br>95% CI:[ 52.17 , 62.72 ]","Race: Others <br>N: 9 <br>Avg. Scores: 69.67 <br>95% CI:[ 59.88 , 79.45 ]"],"key":["1","2","3","4"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(255,0,0,1)","opacity":1,"size":5.6692913385826778,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(255,0,0,1)"}},"hoveron":"points","set":"SharedData59892581","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","_isNestedKey":false,"frame":null}],"layout":{"margin":{"t":40.840182648401829,"r":7.3059360730593621,"b":47.923444344685095,"l":37.260273972602747},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"99% Confidence interval of average /<br>maths scores by race","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,4.5999999999999996],"tickmode":"array","ticktext":["Chinese","Others","Indian","Malay"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["Chinese","Others","Indian","Malay"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-45,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Race","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[40.653487469404247,81.295961157116452],"tickmode":"array","ticktext":["50","60","70","80"],"tickvals":[50,60,70,80],"categoryorder":"array","categoryarray":["50","60","70","80"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Average Scores","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative","dragmode":"zoom"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"3125876fe16a":{"x":{},"ymin":{},"ymax":{},"type":"scatter"},"312586f7a4800":{"x":{},"y":{},"text":{}}},"cur_data":"3125876fe16a","visdat":{"3125876fe16a":["function (y) ","x"],"312586f7a4800":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0,"ctGroups":["SharedData59892581"]},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="col-xs-8">
-<div id="htmlwidget-2481bf1993608c34f01d" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2481bf1993608c34f01d">{"x":{"crosstalkOptions":{"key":["1","2","3","4"],"group":"SharedDatacb2dbd9e"},"filter":"none","vertical":false,"data":[["Chinese","Indian","Malay","Others"],[193,12,108,9],[76.50777202072538,60.66666666666666,57.44444444444444,69.66666666666667],[15.69040284264306,23.35237318418266,21.13478478068458,10.72380529476361],[1.132357288111705,7.041005437844626,2.043176763561474,3.791437722025775]],"container":"<table class=\"compact\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>No. of pupils<\/th>\n      <th>Avg Scores<\/th>\n      <th>Std Dev<\/th>\n      <th>Std Error<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"scrollX":true,"columnDefs":[{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 2, 3, \",\", \".\", null);\n  }"},{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 2, 3, \",\", \".\", null);\n  }"},{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 2, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0},{"name":"RACE","targets":0},{"name":"n","targets":1},{"name":"mean","targets":2},{"name":"sd","targets":3},{"name":"se","targets":4}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-59c201e09bd39b0be4b9" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-59c201e09bd39b0be4b9">{"x":{"crosstalkOptions":{"key":["1","2","3","4"],"group":"SharedData59892581"},"filter":"none","vertical":false,"data":[["Chinese","Indian","Malay","Others"],[193,12,108,9],[76.50777202072538,60.66666666666666,57.44444444444444,69.66666666666667],[15.69040284264306,23.35237318418266,21.13478478068458,10.72380529476361],[1.132357288111705,7.041005437844626,2.043176763561474,3.791437722025775]],"container":"<table class=\"compact\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>No. of pupils<\/th>\n      <th>Avg Scores<\/th>\n      <th>Std Dev<\/th>\n      <th>Std Error<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"scrollX":true,"columnDefs":[{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 2, 3, \",\", \".\", null);\n  }"},{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 2, 3, \",\", \".\", null);\n  }"},{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 2, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0},{"name":"RACE","targets":0},{"name":"n","targets":1},{"name":"mean","targets":2},{"name":"sd","targets":3},{"name":"se","targets":4}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render"],"jsHooks":[]}</script>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-17-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-2-tab">
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>shared_df <span class="ot">=</span> SharedData<span class="sc">$</span><span class="fu">new</span>(my_sum)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -681,29 +697,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>                     <span class="at">digits=</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
-<div id="tabset-17-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-3-tab">
+</div>
+</div>
+</section>
+<section id="self-trying-3" class="level2">
+<h2 class="anchored" data-anchor-id="self-trying-3">Self Trying</h2>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">The plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">The Code</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true" href="">The plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
-<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <div class="cell">
 <div class="cell-output-display">
 <div class="container-fluid crosstalk-bscols">
 <div class="row">
 <div class="col-xs-4">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-1655f7ee16eb99919b48" style="width:100%;height:400px;"></div>
-<script type="application/json" data-for="htmlwidget-1655f7ee16eb99919b48">{"x":{"data":[{"x":[1,2,4,3,5,6,7,8,9],"y":[83.349999999999994,80.71052631578948,72.15384615384616,73.868421052631575,67.28947368421052,62.794871794871796,60.735294117647058,50.060606060606062,38.608695652173914],"text":"","key":["1","2","3","4","5","6","7","8","9"],"type":"scatter","mode":"lines","opacity":0.90000000000000002,"line":{"color":"transparent"},"error_y":{"array":[2.7428728083167755,1.7857017168777247,2.8411144021737442,2.4098075099110616,3.5279493275891838,3.764552840180599,4.0448175308114429,4.5905858536916213,4.87983959727665],"arrayminus":[2.7428728083167755,1.7857017168777247,2.8411144021737442,2.4098075099110616,3.5279493275891838,3.764552840180599,4.0448175308114429,4.5905858536916213,4.87983959727665],"type":"data","width":9.7391304347826182,"symmetric":false,"color":"rgba(190,190,190,1)"},"set":"SharedData9e9e7293","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","_isNestedKey":false,"frame":null},{"x":[1,2,4,3,5,6,7,8,9],"y":[83.349999999999994,80.71052631578948,72.15384615384616,73.868421052631575,67.28947368421052,62.794871794871796,60.735294117647058,50.060606060606062,38.608695652173914],"text":["CLASS: 3A <br>N: 40 <br>Avg. Scores: 83.35 <br>95% CI:[ 80.61 , 86.09 ]","CLASS: 3B <br>N: 38 <br>Avg. Scores: 80.71 <br>95% CI:[ 78.92 , 82.5 ]","CLASS: 3C <br>N: 39 <br>Avg. Scores: 72.15 <br>95% CI:[ 69.31 , 74.99 ]","CLASS: 3D <br>N: 38 <br>Avg. Scores: 73.87 <br>95% CI:[ 71.46 , 76.28 ]","CLASS: 3E <br>N: 38 <br>Avg. Scores: 67.29 <br>95% CI:[ 63.76 , 70.82 ]","CLASS: 3F <br>N: 39 <br>Avg. Scores: 62.79 <br>95% CI:[ 59.03 , 66.56 ]","CLASS: 3G <br>N: 34 <br>Avg. Scores: 60.74 <br>95% CI:[ 56.69 , 64.78 ]","CLASS: 3H <br>N: 33 <br>Avg. Scores: 50.06 <br>95% CI:[ 45.47 , 54.65 ]","CLASS: 3I <br>N: 23 <br>Avg. Scores: 38.61 <br>95% CI:[ 33.73 , 43.49 ]"],"key":["1","2","3","4","5","6","7","8","9"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,255,1)","opacity":1,"size":5.6692913385826778,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,0,255,1)"}},"hoveron":"points","set":"SharedData9e9e7293","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","_isNestedKey":false,"frame":null}],"layout":{"margin":{"t":40.840182648401829,"r":7.3059360730593621,"b":37.260273972602747,"l":37.260273972602747},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"99% Confidence interval of average /<br>maths scores by class","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,9.5999999999999996],"tickmode":"array","ticktext":["3A","3B","3D","3C","3E","3F","3G","3H","3I"],"tickvals":[1,2,3,4,5,6,6.9999999999999991,8,9],"categoryorder":"array","categoryarray":["3A","3B","3D","3C","3E","3F","3G","3H","3I"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-45,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Class","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[31.110655217226288,88.711073645987739],"tickmode":"array","ticktext":["40","50","60","70","80"],"tickvals":[40,50,60,70,80],"categoryorder":"array","categoryarray":["40","50","60","70","80"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Average Scores","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative","dragmode":"zoom"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"2dd444ec9378a":{"x":{},"ymin":{},"ymax":{},"type":"scatter"},"2dd442ec8567e":{"x":{},"y":{},"text":{}}},"cur_data":"2dd444ec9378a","visdat":{"2dd444ec9378a":["function (y) ","x"],"2dd442ec8567e":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0,"ctGroups":["SharedData9e9e7293"]},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-0d6ac37ccdbed945a319" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-0d6ac37ccdbed945a319">{"x":{"data":[{"x":[1,2,4,3,5,6,7,8,9],"y":[83.349999999999994,80.71052631578948,72.15384615384616,73.868421052631575,67.28947368421052,62.794871794871796,60.735294117647058,50.060606060606062,38.608695652173914],"text":"","key":["1","2","3","4","5","6","7","8","9"],"type":"scatter","mode":"lines","opacity":0.90000000000000002,"line":{"color":"transparent"},"error_y":{"array":[2.7428728083167755,1.7857017168777247,2.8411144021737442,2.4098075099110616,3.5279493275891838,3.764552840180599,4.0448175308114429,4.5905858536916213,4.87983959727665],"arrayminus":[2.7428728083167755,1.7857017168777247,2.8411144021737442,2.4098075099110616,3.5279493275891838,3.764552840180599,4.0448175308114429,4.5905858536916213,4.87983959727665],"type":"data","width":9.7391304347826182,"symmetric":false,"color":"rgba(190,190,190,1)"},"set":"SharedData450b068c","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","_isNestedKey":false,"frame":null},{"x":[1,2,4,3,5,6,7,8,9],"y":[83.349999999999994,80.71052631578948,72.15384615384616,73.868421052631575,67.28947368421052,62.794871794871796,60.735294117647058,50.060606060606062,38.608695652173914],"text":["CLASS: 3A <br>N: 40 <br>Avg. Scores: 83.35 <br>95% CI:[ 80.61 , 86.09 ]","CLASS: 3B <br>N: 38 <br>Avg. Scores: 80.71 <br>95% CI:[ 78.92 , 82.5 ]","CLASS: 3C <br>N: 39 <br>Avg. Scores: 72.15 <br>95% CI:[ 69.31 , 74.99 ]","CLASS: 3D <br>N: 38 <br>Avg. Scores: 73.87 <br>95% CI:[ 71.46 , 76.28 ]","CLASS: 3E <br>N: 38 <br>Avg. Scores: 67.29 <br>95% CI:[ 63.76 , 70.82 ]","CLASS: 3F <br>N: 39 <br>Avg. Scores: 62.79 <br>95% CI:[ 59.03 , 66.56 ]","CLASS: 3G <br>N: 34 <br>Avg. Scores: 60.74 <br>95% CI:[ 56.69 , 64.78 ]","CLASS: 3H <br>N: 33 <br>Avg. Scores: 50.06 <br>95% CI:[ 45.47 , 54.65 ]","CLASS: 3I <br>N: 23 <br>Avg. Scores: 38.61 <br>95% CI:[ 33.73 , 43.49 ]"],"key":["1","2","3","4","5","6","7","8","9"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,255,1)","opacity":1,"size":5.6692913385826778,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,0,255,1)"}},"hoveron":"points","set":"SharedData450b068c","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","_isNestedKey":false,"frame":null}],"layout":{"margin":{"t":40.840182648401829,"r":7.3059360730593621,"b":37.260273972602747,"l":37.260273972602747},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"99% Confidence interval of average /<br>maths scores by class","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,9.5999999999999996],"tickmode":"array","ticktext":["3A","3B","3D","3C","3E","3F","3G","3H","3I"],"tickvals":[1,2,3,4,5,6,6.9999999999999991,8,9],"categoryorder":"array","categoryarray":["3A","3B","3D","3C","3E","3F","3G","3H","3I"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-45,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Class","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[31.110655217226288,88.711073645987739],"tickmode":"array","ticktext":["40","50","60","70","80"],"tickvals":[40,50,60,70,80],"categoryorder":"array","categoryarray":["40","50","60","70","80"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Average Scores","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative","dragmode":"zoom"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"3125819949de":{"x":{},"ymin":{},"ymax":{},"type":"scatter"},"312583e523fe0":{"x":{},"y":{},"text":{}}},"cur_data":"3125819949de","visdat":{"3125819949de":["function (y) ","x"],"312583e523fe0":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0,"ctGroups":["SharedData450b068c"]},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="col-xs-8">
-<div id="htmlwidget-a88e89fe4d94a0023566" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a88e89fe4d94a0023566">{"x":{"crosstalkOptions":{"key":["1","2","3","4","5","6","7","8","9"],"group":"SharedData9e9e7293"},"filter":"none","vertical":false,"data":[["3A","3B","3C","3D","3E","3F","3G","3H","3I"],[40,38,39,38,38,39,34,33,23],[83.34999999999999,80.71052631578948,72.15384615384616,73.86842105263158,67.28947368421052,62.7948717948718,60.73529411764706,50.06060606060606,38.60869565217391],[6.639238448759555,4.210077323144592,6.788296668525841,5.681506521906291,8.317704642887712,8.994675287955785,9.006088255644023,10.06522290469576,8.871502539719692],[1.063128995471618,0.6921324484022204,1.101207132625483,0.934033918570177,1.367422219995808,1.459129007821938,1.567758732872651,1.779296842516132,1.891410696618856]],"container":"<table class=\"compact\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>No. of pupils<\/th>\n      <th>Avg Scores<\/th>\n      <th>Std Dev<\/th>\n      <th>Std Error<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"scrollX":true,"columnDefs":[{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 2, 3, \",\", \".\", null);\n  }"},{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 2, 3, \",\", \".\", null);\n  }"},{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 2, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0},{"name":"CLASS","targets":0},{"name":"n","targets":1},{"name":"mean","targets":2},{"name":"sd","targets":3},{"name":"se","targets":4}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-bfbbf9af73be587e0107" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-bfbbf9af73be587e0107">{"x":{"crosstalkOptions":{"key":["1","2","3","4","5","6","7","8","9"],"group":"SharedData450b068c"},"filter":"none","vertical":false,"data":[["3A","3B","3C","3D","3E","3F","3G","3H","3I"],[40,38,39,38,38,39,34,33,23],[83.34999999999999,80.71052631578948,72.15384615384616,73.86842105263158,67.28947368421052,62.7948717948718,60.73529411764706,50.06060606060606,38.60869565217391],[6.639238448759555,4.210077323144592,6.788296668525841,5.681506521906291,8.317704642887712,8.994675287955785,9.006088255644023,10.06522290469576,8.871502539719692],[1.063128995471618,0.6921324484022204,1.101207132625483,0.934033918570177,1.367422219995808,1.459129007821938,1.567758732872651,1.779296842516132,1.891410696618856]],"container":"<table class=\"compact\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>No. of pupils<\/th>\n      <th>Avg Scores<\/th>\n      <th>Std Dev<\/th>\n      <th>Std Error<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"scrollX":true,"columnDefs":[{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 2, 3, \",\", \".\", null);\n  }"},{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 2, 3, \",\", \".\", null);\n  }"},{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 2, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0},{"name":"CLASS","targets":0},{"name":"n","targets":1},{"name":"mean","targets":2},{"name":"sd","targets":3},{"name":"se","targets":4}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render"],"jsHooks":[]}</script>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>shared_df <span class="ot">=</span> SharedData<span class="sc">$</span><span class="fu">new</span>(my_sum1)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -753,12 +773,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</div>
-<div id="tabset-17-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-4-tab">
+</section>
+<section id="visualizing-the-uncertainty-of-point-estimates-ggdist-methods" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-the-uncertainty-of-point-estimates-ggdist-methods">11.4.1 Visualizing the uncertainty of point estimates: ggdist methods</h2>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true" href="">The Ex plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false" href="">The Code</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true" href="">The Ex plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
-<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -769,7 +790,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>exam <span class="sc">%&gt;%</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> RACE, </span>
@@ -782,12 +803,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</div>
-<div id="tabset-17-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-5-tab">
+</section>
+<section id="self-trying-4" class="level2">
+<h2 class="anchored" data-anchor-id="self-trying-4">Self Trying</h2>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true" href="">The plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false" href="">The Code</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true" href="">The plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
-<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
+<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -798,7 +820,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>exam <span class="sc">%&gt;%</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> GENDER, </span>
@@ -812,9 +834,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true" href="">The Ex plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false" href="">The Code</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true" href="">The Ex plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
-<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
+<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -825,7 +847,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
+<div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>exam <span class="sc">%&gt;%</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> RACE, <span class="at">y =</span> MATHS)) <span class="sc">+</span></span>
@@ -839,12 +861,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</div>
-<div id="tabset-17-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-6-tab">
+</section>
+<section id="self-trying-5" class="level2">
+<h2 class="anchored" data-anchor-id="self-trying-5">Self Trying</h2>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true" href="">The Plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false" href="">The Code</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true" href="">The Plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-2" role="tab" aria-controls="tabset-11-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
-<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
+<div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -855,7 +878,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
+<div id="tabset-11-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>exam <span class="sc">%&gt;%</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> GENDER, <span class="at">y =</span> SCIENCE)) <span class="sc">+</span></span>
@@ -869,12 +892,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</div>
-<div id="tabset-17-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-7-tab">
+</section>
+<section id="visualizing-the-uncertainty-of-point-estimates-ggdist-methods-1" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-the-uncertainty-of-point-estimates-ggdist-methods-1">11.4.2 Visualizing the uncertainty of point estimates: ggdist methods</h2>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true" href="">The Ex plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-2" role="tab" aria-controls="tabset-11-2" aria-selected="false" href="">The Code</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true" href="">The Ex plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-2" role="tab" aria-controls="tabset-12-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
-<div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
+<div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -885,7 +909,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="tabset-11-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
+<div id="tabset-12-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>exam <span class="sc">%&gt;%</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> RACE, </span>
@@ -899,12 +923,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</div>
-<div id="tabset-17-8" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-8-tab">
+</section>
+<section id="self-trying-6" class="level2">
+<h2 class="anchored" data-anchor-id="self-trying-6">Self Trying</h2>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true" href="">The Plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-2" role="tab" aria-controls="tabset-12-2" aria-selected="false" href="">The Code</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true" href="">The Plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
-<div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
+<div id="tabset-13-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -915,7 +940,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="tabset-12-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
+<div id="tabset-13-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>exam <span class="sc">%&gt;%</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> CLASS, </span>
@@ -929,12 +954,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</div>
-<div id="tabset-17-9" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-9-tab">
+</section>
+<section id="visualizing-the-uncertainty-of-point-estimates-ggdist-methods-2" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-the-uncertainty-of-point-estimates-ggdist-methods-2">11.4.3 Visualizing the uncertainty of point estimates: ggdist methods</h2>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true" href="">The Ex plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false" href="">The Code</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true" href="">The Ex plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-2" role="tab" aria-controls="tabset-14-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
-<div id="tabset-13-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
+<div id="tabset-14-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -945,7 +971,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="tabset-13-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
+<div id="tabset-14-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>exam <span class="sc">%&gt;%</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> RACE, </span>
@@ -961,12 +987,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</div>
-<div id="tabset-17-10" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-10-tab">
+</section>
+<section id="self-trying-7" class="level2">
+<h2 class="anchored" data-anchor-id="self-trying-7">Self Trying</h2>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true" href="">The plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-2" role="tab" aria-controls="tabset-14-2" aria-selected="false" href="">The Code</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-15-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-1" role="tab" aria-controls="tabset-15-1" aria-selected="true" href="">The plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-15-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-2" role="tab" aria-controls="tabset-15-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
-<div id="tabset-14-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
+<div id="tabset-15-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-15-1-tab">
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -977,7 +1004,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="tabset-14-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-2-tab">
+<div id="tabset-15-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-15-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>exam <span class="sc">%&gt;%</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> CLASS, </span>
@@ -993,22 +1020,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</div>
-<div id="tabset-17-11" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-11-tab">
+</section>
+<section id="installing-ungeviz-package" class="level2">
+<h2 class="anchored" data-anchor-id="installing-ungeviz-package">11.5.1 Installing ungeviz package</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"wilkelab/ungeviz"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</div>
-<div id="tabset-17-12" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-12-tab">
+</section>
+<section id="launch-the-application-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="launch-the-application-in-r">11.5.2 Launch the application in R</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ungeviz)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</div>
-<div id="tabset-17-13" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-13-tab">
+</section>
+<section id="visualising-uncertainty-with-hypothetical-outcome-plots-hops" class="level2">
+<h2 class="anchored" data-anchor-id="visualising-uncertainty-with-hypothetical-outcome-plots-hops">11.5.3 Visualising Uncertainty with Hypothetical Outcome Plots (HOPs)</h2>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-15-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-1" role="tab" aria-controls="tabset-15-1" aria-selected="true" href="">The Ex plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-15-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-2" role="tab" aria-controls="tabset-15-2" aria-selected="false" href="">The Code</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-16-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-1" role="tab" aria-controls="tabset-16-1" aria-selected="true" href="">The Ex plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-16-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-2" role="tab" aria-controls="tabset-16-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
-<div id="tabset-15-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-15-1-tab">
+<div id="tabset-16-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-16-1-tab">
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -1019,7 +1049,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="tabset-15-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-15-2-tab">
+<div id="tabset-16-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-16-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> exam, </span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>       (<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(RACE), </span>
@@ -1040,12 +1070,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</div>
-<div id="tabset-17-14" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-14-tab">
+</section>
+<section id="self-trying-8" class="level2">
+<h2 class="anchored" data-anchor-id="self-trying-8">Self Trying</h2>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-16-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-1" role="tab" aria-controls="tabset-16-1" aria-selected="true" href="">The plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-16-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-2" role="tab" aria-controls="tabset-16-2" aria-selected="false" href="">The Code</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-17-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-1" role="tab" aria-controls="tabset-17-1" aria-selected="true" href="">The plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-2" role="tab" aria-controls="tabset-17-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
-<div id="tabset-16-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-16-1-tab">
+<div id="tabset-17-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-17-1-tab">
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -1056,7 +1087,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="tabset-16-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-16-2-tab">
+<div id="tabset-17-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> exam, </span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>       (<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(CLASS), </span>
@@ -1086,9 +1117,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 
 
-</div>
-</div>
-</div>
 </section>
 
 </main> <!-- /main -->
