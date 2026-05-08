@@ -12,7 +12,6 @@ execute:
   freeze: auto
 ---
 
-
 ## 9.2 Getting Started
 
 ```{r}
@@ -30,6 +29,7 @@ exam <- read_csv("data/Exam_data.csv")
 
 ::: panel-tabset
 ## The Ex plot
+
 ```{r, echo=FALSE}
 ggplot(exam, 
        aes(x = ENGLISH, 
@@ -50,6 +50,7 @@ ggplot(exam,
 ```
 
 ## The Ex Code
+
 ```{r, eval=FALSE}
 ggplot(exam, 
        aes(x = ENGLISH, 
@@ -74,6 +75,7 @@ ggplot(exam,
 
 ::: panel-tabset
 ## The Plot
+
 ```{r, echo=FALSE}
 ggplot(exam, 
        aes(x = SCIENCE, 
@@ -94,6 +96,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam, 
        aes(x = SCIENCE, 
@@ -115,8 +118,10 @@ ggplot(exam,
 :::
 
 ## 9.3.2 Varying fill colors along the x axis
+
 ::: panel-tabset
 ## The Ex plot
+
 ```{r, echo=FALSE}
 ggplot(exam, 
        aes(x = ENGLISH, 
@@ -136,6 +141,7 @@ ggplot(exam,
 ```
 
 ## The Ex Code
+
 ```{r, eval=FALSE}
 ggplot(exam, 
        aes(x = ENGLISH, 
@@ -156,8 +162,10 @@ ggplot(exam,
 :::
 
 ## Self Trying
+
 ::: panel-tabset
 ## The Plot
+
 ```{r, echo=FALSE}
 ggplot(exam, 
        aes(x = MATHS, 
@@ -177,6 +185,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam, 
        aes(x = MATHS, 
@@ -197,8 +206,10 @@ ggplot(exam,
 :::
 
 ## 9.3.3 Mapping the probabilities directly onto colour
+
 ::: panel-tabset
 ## The Ex plot
+
 ```{r, echo=FALSE}
 ggplot(exam,
        aes(x = ENGLISH, 
@@ -212,6 +223,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam,
        aes(x = ENGLISH, 
@@ -226,8 +238,10 @@ ggplot(exam,
 :::
 
 ## Self Trying
+
 ::: panel-tabset
 ## The plot
+
 ```{r, echo=FALSE}
 ggplot(exam,
        aes(x = MATHS, 
@@ -241,6 +255,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam,
        aes(x = MATHS, 
@@ -255,8 +270,10 @@ ggplot(exam,
 :::
 
 ## 9.3.4 Ridgeline plots with quantile lines
+
 ::: panel-tabset
 ## The Ex plot
+
 ```{r, echo=FALSE}
 ggplot(exam,
        aes(x = ENGLISH, 
@@ -273,6 +290,7 @@ ggplot(exam,
 ```
 
 ## The Ex Code
+
 ```{r, eval=FALSE}
 ggplot(exam,
        aes(x = ENGLISH, 
@@ -290,8 +308,10 @@ ggplot(exam,
 :::
 
 ## Self Trying
+
 ::: panel-tabset
 ## The plot
+
 ```{r, echo=FALSE}
 ggplot(exam,
        aes(x = SCIENCE, 
@@ -308,6 +328,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam,
        aes(x = SCIENCE, 
@@ -324,8 +345,9 @@ ggplot(exam,
 ```
 :::
 
-:::panel-tabset
+::: panel-tabset
 ## Ex plot
+
 ```{r, echo=FALSE}
 ggplot(exam,
        aes(x = ENGLISH, 
@@ -346,6 +368,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam,
        aes(x = ENGLISH, 
@@ -367,8 +390,10 @@ ggplot(exam,
 :::
 
 ## Self Trying
+
 ::: panel-tabset
 ## The Plot
+
 ```{r, echo=FALSE}
 ggplot(exam,
        aes(x = MATHS, 
@@ -389,6 +414,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam,
        aes(x = MATHS, 
@@ -410,8 +436,10 @@ ggplot(exam,
 :::
 
 ## 9.4.1 Plotting a Half Eye graph
+
 ::: panel-tabset
 ## The plot
+
 ```{r, echo=FALSE}
 ggplot(exam, 
        aes(x = RACE, 
@@ -423,6 +451,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam, 
        aes(x = RACE, 
@@ -435,8 +464,10 @@ ggplot(exam,
 :::
 
 ## self-Trying
+
 ::: panel-tabset
 ## The plot
+
 ```{r, echo=FALSE}
 ggplot(exam, 
        aes(x = RACE, 
@@ -448,6 +479,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam, 
        aes(x = RACE, 
@@ -460,8 +492,10 @@ ggplot(exam,
 :::
 
 ## 9.4.2 Adding the boxplot with geom_boxplot()
+
 ::: panel-tabset
 ## The Ex plot
+
 ```{r, echo=FALSE}
 ggplot(exam, 
        aes(x = RACE, 
@@ -473,7 +507,9 @@ ggplot(exam,
   geom_boxplot(width = .20,
                outlier.shape = NA)
 ```
+
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam, 
        aes(x = RACE, 
@@ -488,8 +524,10 @@ ggplot(exam,
 :::
 
 ## Self Trying
+
 ::: panel-tabset
 ## The plot
+
 ```{r, echo=FALSE}
 ggplot(exam, 
        aes(x = RACE, 
@@ -501,7 +539,9 @@ ggplot(exam,
   geom_boxplot(width = .20,
                outlier.shape = NA)
 ```
+
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam, 
        aes(x = RACE, 
@@ -516,8 +556,10 @@ ggplot(exam,
 :::
 
 ## 9.4.3 Adding the Dot Plots with stat_dots()
+
 ::: panel-tabset
 ## The Ex plot
+
 ```{r, echo=FALSE}
 ggplot(exam, 
        aes(x = RACE, 
@@ -533,7 +575,9 @@ ggplot(exam,
             binwidth = .5,
             dotsize = 2)
 ```
+
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam, 
        aes(x = RACE, 
@@ -552,8 +596,10 @@ ggplot(exam,
 :::
 
 ## Self Trying
+
 ::: panel-tabset
 ## The plot
+
 ```{r, echo=FALSE}
 ggplot(exam, 
        aes(x = GENDER, 
@@ -571,6 +617,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam, 
        aes(x = GENDER, 
@@ -589,8 +636,10 @@ ggplot(exam,
 :::
 
 ## 9.4.4 Finishing touch
+
 ::: panel-tabset
 ## Ex plot
+
 ```{r, echo=FALSE}
 ggplot(exam, 
        aes(x = RACE, 
@@ -610,6 +659,7 @@ ggplot(exam,
 ```
 
 ## Ex Code
+
 ```{r, eval=FALSE}
 ggplot(exam, 
        aes(x = RACE, 
@@ -630,8 +680,10 @@ ggplot(exam,
 :::
 
 ## Self Trying
+
 ::: panel-tabset
 ## The plot
+
 ```{r, echo=FALSE}
 ggplot(exam, 
        aes(x = GENDER, 
@@ -651,6 +703,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r, eval=FALSE}
 ggplot(exam, 
        aes(x = GENDER, 
@@ -668,4 +721,4 @@ ggplot(exam,
   coord_flip() +
   theme_economist()
 ```
-
+:::

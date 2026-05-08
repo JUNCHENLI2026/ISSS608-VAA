@@ -1,0 +1,329 @@
+---
+title: "Hands-on_Ex0402"
+author: "JUNCHEN LI"
+date: "May 7,2026"
+date-modified: "last-modified"
+format: html
+editor: visual
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: auto
+---
+
+## 10.3.1 Installing and launching R packages
+
+```{r}
+pacman::p_load(ggstatsplot, tidyverse)
+```
+
+## 10.3.2 Importing data
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+## 10.3.3 One-sample test: gghistostats() method
+
+::: panel-tabset
+## Ex plot
+
+```{r, echo=FALSE}
+set.seed(1234)
+
+gghistostats(
+  data = exam_data,
+  x = ENGLISH,
+  type = "bayes",
+  test.value = 60,
+  xlab = "English scores"
+)
+```
+
+## The Code
+
+```{r, eval=FALSE}
+set.seed(1234)
+
+gghistostats(
+  data = exam_data,
+  x = ENGLISH,
+  type = "bayes",
+  test.value = 60,
+  xlab = "English scores"
+)
+```
+:::
+
+## Self Trying
+
+::: Panel-tabset
+## The plot
+
+```{r, echo=FALSE}
+set.seed(1234)
+
+gghistostats(
+  data = exam_data,
+  x = SCIENCE,
+  type = "bayes",
+  test.value = 60,
+  xlab = "SCIENCE scores"
+)
+```
+
+## The Code
+
+```{r, eval=FALSE}
+set.seed(1234)
+
+gghistostats(
+  data = exam_data,
+  x = SCIENCE,
+  type = "bayes",
+  test.value = 60,
+  xlab = "SCIENCE scores"
+)
+```
+:::
+
+## 10.3.6 Two-sample mean test: ggbetweenstats()
+
+::: Panel-tabset
+## The Ex plot
+
+```{r, echo=FALSE}
+ggbetweenstats(
+  data = exam_data,
+  x = GENDER, 
+  y = MATHS,
+  type = "np",
+  messages = FALSE
+)
+```
+
+## The Code
+
+```{r, eval=FALSE}
+ggbetweenstats(
+  data = exam_data,
+  x = GENDER, 
+  y = MATHS,
+  type = "np",
+  messages = FALSE
+)
+```
+:::
+
+## Self Trying
+
+::: Panel-tabset
+## The Plot
+
+```{r, echo=FALSE}
+ggbetweenstats(
+  data = exam_data,
+  x = RACE, 
+  y = ENGLISH,
+  type = "np",
+  messages = FALSE
+)
+```
+
+## The Code
+
+```{r, eval=FALSE}
+ggbetweenstats(
+  data = exam_data,
+  x = RACE, 
+  y = ENGLISH,
+  type = "np",
+  messages = FALSE
+)
+```
+:::
+
+## 10.3.7 Oneway ANOVA Test: ggbetweenstats() method
+
+::: panel-tabset
+## The Ex plot
+
+```{r, echo=FALSE}
+ggbetweenstats(
+  data = exam_data,
+  x = RACE, 
+  y = ENGLISH,
+  type = "p",
+  mean.ci = TRUE, 
+  pairwise.comparisons = TRUE, 
+  pairwise.display = "s",
+  p.adjust.method = "fdr",
+  messages = FALSE
+)
+```
+
+## The Code
+
+```{r, eval=FALSE}
+ggbetweenstats(
+  data = exam_data,
+  x = RACE, 
+  y = ENGLISH,
+  type = "p",
+  mean.ci = TRUE, 
+  pairwise.comparisons = TRUE, 
+  pairwise.display = "s",
+  p.adjust.method = "fdr",
+  messages = FALSE
+)
+```
+:::
+
+## Self Trying
+
+::: panel-tabset
+## The plot
+
+```{r, echo=FALSE}
+ggbetweenstats(
+  data = exam_data,
+  x = GENDER, 
+  y = SCIENCE,
+  type = "p",
+  mean.ci = TRUE, 
+  pairwise.comparisons = TRUE, 
+  pairwise.display = "s",
+  p.adjust.method = "fdr",
+  messages = FALSE
+)
+```
+
+## The code
+
+```{r, eval=FALSE}
+ggbetweenstats(
+  data = exam_data,
+  x = GENDER, 
+  y = SCIENCE,
+  type = "p",
+  mean.ci = TRUE, 
+  pairwise.comparisons = TRUE, 
+  pairwise.display = "s",
+  p.adjust.method = "fdr",
+  messages = FALSE
+)
+```
+:::
+
+## 10.3.8 Significant Test of Correlation: ggscatterstats()
+
+::: panel-tabset
+## The plot
+
+```{r, echo=FALSE}
+ggscatterstats(
+  data = exam_data,
+  x = MATHS,
+  y = ENGLISH,
+  marginal = FALSE,
+  )
+```
+
+## The Code
+
+```{r, eval=FALSE}
+ggscatterstats(
+  data = exam_data,
+  x = MATHS,
+  y = ENGLISH,
+  marginal = FALSE,
+  )
+```
+:::
+
+## Self Trying
+
+::: panel-tabset
+## The plot
+
+```{r, echo=FALSE}
+ggscatterstats(
+  data = exam_data,
+  x = SCIENCE,
+  y = MATHS,
+  marginal = FALSE,
+  )
+```
+
+## The Code
+
+```{r, eval=FALSE}
+ggscatterstats(
+  data = exam_data,
+  x = SCIENCE,
+  y = MATHS,
+  marginal = FALSE,
+  )
+```
+:::
+
+## 10.3.9 Significant Test of Association (Depedence) : ggbarstats() methods
+
+::: panel-tabset
+## The Ex plot
+
+```{r, echo=FALSE}
+exam1 <- exam_data %>% 
+  mutate(MATHS_bins = 
+           cut(MATHS, 
+               breaks = c(0,60,75,85,100))
+)
+ggbarstats(exam1, 
+           x = MATHS_bins, 
+           y = GENDER)
+```
+
+## The Code
+
+```{r, eval=FALSE}
+exam1 <- exam_data %>% 
+  mutate(MATHS_bins = 
+           cut(MATHS, 
+               breaks = c(0,60,75,85,100))
+)
+ggbarstats(exam1, 
+           x = MATHS_bins, 
+           y = GENDER)
+```
+:::
+
+## Self-Trying
+
+::: panel-tabset
+## The plot
+
+```{r, echo=FALSE}
+exam1 <- exam_data %>% 
+  mutate(SCIENCE_bins = 
+           cut(SCIENCE, 
+               breaks = c(0,60,75,85,100))
+)
+ggbarstats(exam1, 
+           x = SCIENCE_bins, 
+           y = RACE)
+```
+
+## The Code
+
+```{r, eval=FALSE}
+exam1 <- exam_data %>% 
+  mutate(SCIENCE_bins = 
+           cut(SCIENCE, 
+               breaks = c(0,60,75,85,100))
+)
+ggbarstats(exam1, 
+           x = SCIENCE_bins, 
+           y = RACE)
+```
+:::
