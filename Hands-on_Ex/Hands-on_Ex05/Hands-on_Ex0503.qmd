@@ -1,0 +1,311 @@
+---
+title: "Hands-on_Ex0503"
+author: "JUNCHEN LI"
+date: "May 14,2026"
+date-modified: "last-modified"
+format: html
+editor: visual
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: auto
+---
+
+## 14.2 Installing and Launching R Packages
+
+```{r}
+pacman::p_load(seriation, dendextend, heatmaply, tidyverse)
+```
+
+## 14.3.1 Importing the data set
+
+```{r}
+wh <- read_csv("data/WHData-2018.csv")
+```
+
+## 14.3.2 Preparing the data
+
+```{r}
+row.names(wh) <- wh$Country
+```
+
+## 14.3.3 Transforming the data frame into a matrix
+
+```{r}
+wh1 <- dplyr::select(wh, c(3, 7:12))
+wh_matrix <- data.matrix(wh)
+```
+
+## 14.4.1 heatmap() of R Stats
+
+```{r}
+wh_heatmap <- heatmap(wh_matrix,
+                      Rowv=NA, Colv=NA)
+```
+
+```{r}
+wh_heatmap <- heatmap(wh_matrix)
+```
+
+### Self Trying
+
+#### 14.3.2 Preparing the data
+
+```{r}
+library(dplyr)
+
+wh_top30 <- wh %>%
+  arrange(desc(`Happiness score`)) %>%
+  slice(1:30)
+
+row.names(wh_top30) <- wh_top30$Country
+```
+
+#### 14.3.3 Transforming the data frame into a matrix
+
+```{r}
+wh_top30_selected <- wh_top30 %>%
+  dplyr::select(
+    `Happiness score`,
+    `GDP per capita`,
+    `Social support`,
+    `Healthy life expectancy`,
+    `Freedom to make life choices`,
+    `Generosity`,
+    `Perceptions of corruption`
+  )
+
+wh_top30_matrix <- data.matrix(wh_top30_selected)
+```
+
+#### 14.4.1 heatmap() of R Stats
+
+```{r}
+wh_top30_heatmap <- heatmap(
+  wh_top30_matrix,
+  Rowv = NA,
+  Colv = NA,
+  scale = "column"
+)
+```
+
+```{r}
+wh_top30_heatmap <- heatmap(wh_top30_matrix)
+```
+
+## Ex plot
+
+```{r}
+wh_heatmap <- heatmap(wh_matrix,
+                      scale="column",
+                      cexRow = 0.6, 
+                      cexCol = 0.8,
+                      margins = c(10, 4))
+```
+
+### Self Trying
+
+```{r}
+wh_top30_heatmap <- heatmap(wh_top30_matrix,
+                      scale="column",
+                      cexRow = 0.6, 
+                      cexCol = 0.8,
+                      margins = c(10, 4))
+```
+
+## 14.5.1 Working with heatmaply
+
+```{r}
+heatmaply(mtcars)
+```
+
+```{r}
+heatmaply(wh_matrix[, -c(1, 2, 4, 5)])
+```
+
+### Self Trying
+
+```{r}
+heatmaply(wh_top30_matrix[, -c(1, 2, 4, 5)])
+```
+
+## 14.5.2 Data trasformation
+
+```{r}
+heatmaply(wh_matrix[, -c(1, 2, 4, 5)],
+          scale = "column")
+```
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]))
+```
+
+```{r}
+heatmaply(percentize(wh_matrix[, -c(1, 2, 4, 5)]))
+```
+
+### Self Trying
+
+```{r}
+heatmaply(wh_top30_matrix[, -c(1, 2, 4, 5)],
+          scale = "column")
+```
+
+```{r}
+heatmaply(normalize(wh_top30_matrix[, -c(1, 2, 4, 5)]))
+```
+
+```{r}
+heatmaply(percentize(wh_top30_matrix[, -c(1, 2, 4, 5)]))
+```
+
+## 14.5.4 Manual approach
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          dist_method = "euclidean",
+          hclust_method = "ward.D")
+```
+
+### Self Trying
+
+```{r}
+heatmaply(normalize(wh_top30_matrix[, -c(1, 2, 4, 5)]),
+          dist_method = "manhattan",
+          hclust_method = "ward.D")
+```
+
+## 14.5.5 Statistical approach
+
+```{r}
+wh_d <- dist(normalize(wh_matrix[, -c(1, 2, 4, 5)]), method = "euclidean")
+dend_expend(wh_d)[[3]]
+```
+
+```{r}
+wh_clust <- hclust(wh_d, method = "average")
+num_k <- find_k(wh_clust)
+plot(num_k)
+```
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          dist_method = "euclidean",
+          hclust_method = "average",
+          k_row = 3)
+```
+
+### Self Trying
+
+```{r}
+wh_d <- dist(normalize(wh_top30_matrix[, -c(1, 2, 4, 5)]), method = "manhattan")
+dend_expend(wh_d)[[3]]
+```
+
+```{r}
+wh_clust <- hclust(wh_d, method = "average")
+num_k <- find_k(wh_clust)
+plot(num_k)
+```
+
+```{r}
+heatmaply(normalize(wh_top30_matrix[, -c(1, 2, 4, 5)]),
+          dist_method = "manhattan",
+          hclust_method = "average",
+          k_row = 3)
+```
+
+## 14.5.6 Seriation
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "OLO")
+```
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "GW")
+```
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "mean")
+```
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "none")
+```
+
+### Self Trying
+
+```{r}
+heatmaply(normalize(wh_top30_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "OLO")
+```
+
+```{r}
+heatmaply(normalize(wh_top30_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "GW")
+```
+
+```{r}
+heatmaply(normalize(wh_top30_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "mean")
+```
+
+```{r}
+heatmaply(normalize(wh_top30_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "none")
+```
+
+## 14.5.7 Working with colour palettes
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "none",
+          colors = Blues)
+```
+
+### Self Trying
+
+```{r}
+heatmaply(normalize(wh_top30_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "none",
+          colors = Reds)
+```
+
+## 14.5.8 The finishing touch
+
+```{r}
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          Colv=NA,
+          seriate = "none",
+          colors = Blues,
+          k_row = 5,
+          margins = c(NA,200,60,NA),
+          fontsize_row = 4,
+          fontsize_col = 5,
+          main="World Happiness Score and Variables by Country, 2018 \nDataTransformation using Normalise Method",
+          xlab = "World Happiness Indicators",
+          ylab = "World Countries"
+          )
+```
+
+### Self Trying
+
+```{r}
+heatmaply(normalize(wh_top30_matrix[, -c(1, 2, 4, 5)]),
+          Colv=NA,
+          seriate = "none",
+          colors = Reds,
+          k_row = 5,
+          margins = c(NA,200,60,NA),
+          fontsize_row = 4,
+          fontsize_col = 5,
+          main="Top 30 World Happiness Score and Variables by Country, 2018 \nDataTransformation using Normalise Method",
+          xlab = "World Happiness Indicators",
+          ylab = "World Countries"
+          )
+```

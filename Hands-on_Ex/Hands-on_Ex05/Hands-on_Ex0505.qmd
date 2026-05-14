@@ -1,0 +1,513 @@
+---
+title: "Hands-on_Ex0505"
+author: "JUNCHEN LI"
+date: "May 14,2026"
+date-modified: "last-modified"
+format: html
+editor: visual
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: auto
+---
+
+## 16.2 Installing and Launching R Packages
+
+```{r}
+pacman::p_load(treemap, treemapify, tidyverse) 
+```
+
+## 16.3.1 Importing the data set
+
+```{r}
+realis2018 <- read_csv("data/realis2018.csv")
+```
+
+## 16.3.3 Grouped summaries without the Pipe
+
+```{r}
+realis2018_grouped <- group_by(realis2018, `Project Name`,
+                               `Planning Region`, `Planning Area`, 
+                               `Property Type`, `Type of Sale`)
+realis2018_summarised <- summarise(realis2018_grouped, 
+                          `Total Unit Sold` = sum(`No. of Units`, na.rm = TRUE),
+                          `Total Area` = sum(`Area (sqm)`, na.rm = TRUE),
+                          `Median Unit Price ($ psm)` = median(`Unit Price ($ psm)`, na.rm = TRUE), 
+                          `Median Transacted Price` = median(`Transacted Price ($)`, na.rm = TRUE))
+```
+## 16.3.4 Grouped summaries with the pipe
+
+```{r}
+realis2018_summarised <- realis2018 %>% 
+  group_by(`Project Name`,`Planning Region`, 
+           `Planning Area`, `Property Type`, 
+           `Type of Sale`) %>%
+  summarise(`Total Unit Sold` = sum(`No. of Units`, na.rm = TRUE), 
+            `Total Area` = sum(`Area (sqm)`, na.rm = TRUE),
+            `Median Unit Price ($ psm)` = median(`Unit Price ($ psm)`, na.rm = TRUE),
+            `Median Transacted Price` = median(`Transacted Price ($)`, na.rm = TRUE))
+```
+## 16.4.1 Designing a static treemap
+
+```{r}
+realis2018_selected <- realis2018_summarised %>%
+  filter(`Property Type` == "Condominium", `Type of Sale` == "Resale")
+```
+## 16.4.2 Using the basic arguments
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+## 16.4.3 Working with vColor and type arguments
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type = "value",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+## 16.4.5 The “value” type treemap
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="value",
+        palette="RdYlBu", 
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+## 16.4.6 The “manual” type treemap
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="manual",
+        palette="RdYlBu", 
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+## Ex single colour palette(Blue)
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="manual",
+        palette="Blues", 
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+## 16.4.8 Working with algorithm argument
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="manual",
+        palette="Blues", 
+        algorithm = "squarified",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+## 16.4.9 Using sortID
+
+```{r}
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="manual",
+        palette="Blues", 
+        algorithm = "pivotSize",
+        sortID = "Median Transacted Price",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+## 16.5.1 Designing a basic treemap
+
+```{r}
+ggplot(data=realis2018_selected, 
+       aes(area = `Total Unit Sold`,
+           fill = `Median Unit Price ($ psm)`),
+       layout = "scol",
+       start = "bottomleft") + 
+  geom_treemap() +
+  scale_fill_gradient(low = "light blue", high = "blue")
+```
+## 16.5.2 Defining hierarchy
+
+```{r}
+ggplot(data=realis2018_selected, 
+       aes(area = `Total Unit Sold`,
+           fill = `Median Unit Price ($ psm)`,
+           subgroup = `Planning Region`),
+       start = "topleft") + 
+  geom_treemap()
+```
+## Group by Planning Area
+
+```{r}
+ggplot(data=realis2018_selected, 
+       aes(area = `Total Unit Sold`,
+           fill = `Median Unit Price ($ psm)`,
+           subgroup = `Planning Region`,
+           subgroup2 = `Planning Area`)) + 
+  geom_treemap()
+```
+## Adding boundary line
+
+```{r}
+ggplot(data=realis2018_selected, 
+       aes(area = `Total Unit Sold`,
+           fill = `Median Unit Price ($ psm)`,
+           subgroup = `Planning Region`,
+           subgroup2 = `Planning Area`)) + 
+  geom_treemap() +
+  geom_treemap_subgroup2_border(colour = "gray40",
+                                size = 2) +
+  geom_treemap_subgroup_border(colour = "gray20")
+```
+## 16.6.1 Installing d3treeR package
+
+```{r，eval=FALSE}
+install.packages("devtools")
+```
+
+```{r,eval=FALSE}
+library(devtools)
+install_github("timelyportfolio/d3treeR")
+```
+
+```{r}
+library(d3treeR)
+```
+
+## 16.6.2 Designing An Interactive Treemap
+```{r}
+tm <- treemap(realis2018_summarised,
+        index=c("Planning Region", "Planning Area"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="value",
+        title="Private Residential Property Sold, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+# Self Trying
+
+## 16.3.3 Self Trying: Grouped summaries without the pipe
+
+```{r}
+realis2018_grouped <- group_by(
+  realis2018,
+  `Planning Region`,
+  `Property Type`
+)
+
+realis2018_summarised <- summarise(
+  realis2018_grouped,
+  `Number of Transactions` = n(),
+  `Total Units Sold` = sum(`No. of Units`, na.rm = TRUE),
+  `Total Area (sqm)` = sum(`Area (sqm)`, na.rm = TRUE),
+  `Average Unit Price ($ psm)` = mean(`Unit Price ($ psm)`, na.rm = TRUE),
+  `Median Unit Price ($ psm)` = median(`Unit Price ($ psm)`, na.rm = TRUE),
+  `Average Transacted Price ($)` = mean(`Transacted Price ($)`, na.rm = TRUE),
+  `Median Transacted Price ($)` = median(`Transacted Price ($)`, na.rm = TRUE)
+)
+```
+
+## 16.3.4 Self Trying: Select resale apartment records
+
+```{r}
+realis2018_summarised <- realis2018 %>%
+  group_by(`Planning Region`, `Planning Area`, `Property Type`, `Type of Sale`) %>%
+  summarise(
+    `Number of Transactions` = n(),
+    `Total Units Sold` = sum(`No. of Units`, na.rm = TRUE),
+    `Total Area (sqm)` = sum(`Area (sqm)`, na.rm = TRUE),
+    `Average Unit Price ($ psm)` = mean(`Unit Price ($ psm)`, na.rm = TRUE),
+    `Median Unit Price ($ psm)` = median(`Unit Price ($ psm)`, na.rm = TRUE),
+    `Average Transacted Price ($)` = mean(`Transacted Price ($)`, na.rm = TRUE),
+    `Median Transacted Price ($)` = median(`Transacted Price ($)`, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(`Total Units Sold`))
+```
+
+## 16.4.1 Self Trying: Select resale apartment records
+
+```{r}
+realis2018_selected <- realis2018_summarised %>%
+  filter(`Property Type` == "Apartment",
+         `Type of Sale` == "Resale")
+```
+
+## 16.4.2 Self Trying: Using the basic arguments
+
+```{r}
+treemap(
+  realis2018_selected,
+  index = c("Planning Region", "Planning Area"),
+  vSize = "Total Units Sold",
+  vColor = "Median Unit Price ($ psm)",
+  title = "Resale Apartment by Planning Region and Area, 2018",
+  title.legend = "Median Unit Price (S$ per sq. m)"
+)
+```
+
+## 16.4.3 Self Trying: Working with vColor and type arguments
+
+```{r}
+treemap(
+  realis2018_selected,
+  index = c("Planning Region", "Planning Area"),
+  vSize = "Total Units Sold",
+  vColor = "Median Unit Price ($ psm)",
+  type = "value",
+  title = "Resale Apartment by Planning Region and Area, 2018",
+  title.legend = "Median Unit Price (S$ per sq. m)"
+)
+```
+
+## 16.4.5 Self Trying: The "value" type treemap
+
+```{r}
+treemap(
+  realis2018_selected,
+  index = c("Planning Region", "Planning Area"),
+  vSize = "Total Units Sold",
+  vColor = "Median Unit Price ($ psm)",
+  type = "value",
+  palette = "YlGnBu",
+  title = "Resale Apartment by Planning Region and Area, 2018",
+  title.legend = "Median Unit Price (S$ per sq. m)"
+)
+```
+
+## 16.4.6 Self Trying: The "manual" type treemap
+
+```{r}
+treemap(
+  realis2018_selected,
+  index = c("Planning Region", "Planning Area"),
+  vSize = "Total Units Sold",
+  vColor = "Average Transacted Price ($)",
+  type = "manual",
+  palette = "YlGnBu",
+  title = "Resale Apartment by Planning Region and Area, 2018",
+  title.legend = "Average Transacted Price (S$)"
+)
+```
+
+## Self Trying: The "manual" type treemap with Blues palette
+
+```{r}
+treemap(
+  realis2018_selected,
+  index = c("Planning Region", "Planning Area"),
+  vSize = "Total Units Sold",
+  vColor = "Average Transacted Price ($)",
+  type = "manual",
+  palette = "Blues",
+  title = "Resale Apartment by Planning Region and Area, 2018",
+  title.legend = "Average Transacted Price (S$)"
+)
+```
+
+
+## 16.4.8 Self Trying: Working with algorithm argument
+
+```{r}
+treemap(
+  realis2018_selected,
+  index = c("Planning Region", "Planning Area"),
+  vSize = "Total Units Sold",
+  vColor = "Average Transacted Price ($)",
+  type = "manual",
+  palette = "Blues",
+  algorithm = "squarified",
+  title = "Resale Apartment by Planning Region and Area, 2018",
+  title.legend = "Average Transacted Price (S$)"
+)
+```
+
+## 16.4.9 Self Trying: Using sortID
+
+```{r}
+treemap(
+  realis2018_selected,
+  index = c("Planning Region", "Planning Area"),
+  vSize = "Total Units Sold",
+  vColor = "Average Transacted Price ($)",
+  type = "manual",
+  palette = "Blues",
+  algorithm = "pivotSize",
+  sortID = "Median Transacted Price ($)",
+  title = "Resale Apartment by Planning Region and Area, 2018",
+  title.legend = "Average Transacted Price (S$)"
+)
+```
+
+## 16.5.1 Self Trying: Designing a basic treemap
+
+```{r}
+ggplot(
+  data = realis2018_selected,
+  aes(
+    area = `Total Units Sold`,
+    fill = `Average Transacted Price ($)`
+  )
+) +
+  geom_treemap(
+    layout = "scol",
+    start = "bottomleft"
+  ) +
+  scale_fill_gradient(
+    low = "light blue",
+    high = "blue"
+  ) +
+  labs(
+    title = "Basic Treemap of Resale Apartment Transactions in 2018",
+    fill = "Average Transacted Price"
+  )
+```
+
+## 16.5.2 Self Trying: Defining hierarchy
+
+```{r}
+ggplot(
+  data = realis2018_selected,
+  aes(
+    area = `Total Units Sold`,
+    fill = `Average Transacted Price ($)`,
+    subgroup = `Planning Region`
+  )
+) +
+  geom_treemap(
+    layout = "scol",
+    start = "topleft"
+  ) +
+  geom_treemap_subgroup_border(
+    colour = "white",
+    size = 2
+  ) +
+  scale_fill_gradient(
+    low = "light blue",
+    high = "blue"
+  ) +
+  labs(
+    title = "Treemap of Resale Apartment Transactions by Planning Region",
+    fill = "Average Transacted Price"
+  )
+```
+
+## Self Trying: Group by Planning Area
+
+```{r}
+ggplot(
+  data = realis2018_selected,
+  aes(
+    area = `Total Units Sold`,
+    fill = `Average Transacted Price ($)`,
+    subgroup = `Planning Region`,
+    subgroup2 = `Planning Area`
+  )
+) +
+  geom_treemap(
+    layout = "scol",
+    start = "topleft"
+  ) +
+  geom_treemap_subgroup_border(
+    colour = "white",
+    size = 2
+  ) +
+  geom_treemap_subgroup2_border(
+    colour = "grey70",
+    size = 0.8
+  ) +
+  scale_fill_gradient(
+    low = "light blue",
+    high = "blue"
+  ) +
+  labs(
+    title = "Treemap of Resale Apartment Transactions by Planning Region and Area",
+    fill = "Average Transacted Price"
+  )
+```
+
+### Self Trying： Adding boundary line
+
+```{r}
+ggplot(
+  data = realis2018_selected,
+  aes(
+    area = `Total Units Sold`,
+    fill = `Average Transacted Price ($)`,
+    subgroup = `Planning Region`,
+    subgroup2 = `Planning Area`
+  )
+) +
+  geom_treemap(
+    layout = "scol",
+    start = "topleft"
+  ) +
+  geom_treemap_subgroup2_border(
+    colour = "gray70",
+    size = 1
+  ) +
+  geom_treemap_subgroup_border(
+    colour = "gray20",
+    size = 2
+  ) +
+  scale_fill_gradient(
+    low = "light blue",
+    high = "blue"
+  ) +
+  labs(
+    title = "Treemap of Resale Apartment Transactions by Planning Region and Area",
+    fill = "Average Transacted Price"
+  )
+```
+### Self Trying: Designing An Interactive Treemap
+```{r}
+tm <- treemap(
+  realis2018_selected,
+  index = c("Planning Region", "Planning Area"),
+  vSize = "Total Units Sold",
+  vColor = "Average Transacted Price ($)",
+  type = "value",
+  palette = "Blues",
+  title = "Interactive Treemap of Resale Apartment Transactions, 2018",
+  title.legend = "Average Transacted Price (S$)"
+)
+```
+
+## Then d3tree() is used to build an interactive treemap
+```{r}
+d3tree(tm,rootname = "Singapore" )
+```
+
+

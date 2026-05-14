@@ -1,0 +1,252 @@
+---
+title: "Hands-on_Ex0504"
+author: "JUNCHEN LI"
+date: "May 14,2026"
+date-modified: "last-modified"
+format: html
+editor: visual
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: auto
+---
+
+## 15.2 Installing and Launching R Packages
+
+```{r}
+pacman::p_load(GGally, parallelPlot, tidyverse)
+```
+
+## 15.3 Data Preparation
+
+```{r}
+wh <- read_csv("data/WHData-2018.csv")
+```
+
+## 15.4.1 Plotting a simple parallel coordinates
+
+```{r}
+ggparcoord(data = wh, 
+           columns = c(7:12))
+```
+
+### Self Trying: Parallel coordinates plot for top 30 happiest countries
+
+```{r}
+wh_parallel <- wh %>%
+  mutate(
+    happiness_group = ifelse(
+      `Happiness score` >= median(`Happiness score`, na.rm = TRUE),
+      "Higher happiness",
+      "Lower happiness"
+    )
+  ) %>%
+  select(
+    Country,
+    happiness_group,
+    GDP_per_capita = `GDP per capita`,
+    Social_support = `Social support`,
+    Healthy_life_expectancy = `Healthy life expectancy`,
+    Freedom = `Freedom to make life choices`,
+    Generosity,
+    Corruption = `Perceptions of corruption`
+  )
+
+ggparcoord(
+  data = wh_parallel,
+  columns = 3:8,
+  groupColumn = 2,
+  scale = "uniminmax",
+  alphaLines = 0.7
+)
+```
+
+## 15.4.2 Plotting a parallel coordinates with boxplot
+
+```{r}
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Parallel Coordinates Plot of World Happines Variables")
+```
+
+### Self Trying
+
+```{r}
+ggparcoord(
+  data = wh_parallel,
+  columns = 2:7,
+  groupColumn = 1,
+  scale = "uniminmax",
+  alphaLines = 0.2,
+  boxplot = TRUE,
+  title = "Parallel Coordinates Plot by Happiness Group"
+)
+```
+
+## 15.4.3 Parallel coordinates with facet
+
+```{r}
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Multiple Parallel Coordinates Plots of World Happines Variables by Region") +
+  facet_wrap(~ Region)
+```
+
+### Self Trying: Parallel coordinates with facet by happiness group
+
+```{r}
+ggparcoord(
+  data = wh_parallel,
+  columns = 3:8,
+  groupColumn = 2,
+  scale = "uniminmax",
+  alphaLines = 0.2,
+  boxplot = TRUE,
+  title = "Faceted Parallel Coordinates Plot by Happiness Group"
+) +
+  facet_wrap(~ happiness_group)
+```
+
+## 15.4.4 Rotating x-axis text label
+
+```{r}
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Multiple Parallel Coordinates Plots of World Happines Variables by Region") +
+  facet_wrap(~ Region) + 
+  theme(axis.text.x = element_text(angle = 30))
+```
+
+### Self Trying
+
+```{r}
+ggparcoord(data = wh_parallel, 
+           columns = 3:8, 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Faceted Parallel Coordinates Plot by Happiness Group") +
+  facet_wrap(~ happiness_group) + 
+  theme(axis.text.x = element_text(angle = 30))
+```
+
+## 15.4.5 Adjusting the rotated x-axis text label
+
+```{r}
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Multiple Parallel Coordinates Plots of World Happines Variables by Region") +
+  facet_wrap(~ Region) + 
+  theme(axis.text.x = element_text(angle = 30, hjust=1))
+```
+
+### Self Trying
+
+```{r}
+ggparcoord(data = wh_parallel, 
+           columns = 3:8, 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Faceted Parallel Coordinates Plot by Happiness Group") +
+  facet_wrap(~ happiness_group) + 
+  theme(axis.text.x = element_text(angle = 30, hjust=1))
+```
+
+## 15.5.1 The basic plot
+
+```{r}
+wh <- wh %>%
+  select("Happiness score", c(7:12))
+parallelPlot(wh,
+             width = 320,
+             height = 250)
+```
+
+### Self Trying: Interactive parallel coordinates plot for top 30 happiest countries
+
+```{r}
+wh_parallel_interactive <- wh %>%
+  select(
+    Happiness_score = `Happiness score`,
+    GDP_per_capita = `GDP per capita`,
+    Social_support = `Social support`,
+    Healthy_life_expectancy = `Healthy life expectancy`,
+    Freedom = `Freedom to make life choices`,
+    Generosity,
+    Corruption = `Perceptions of corruption`
+  )
+
+parallelPlot(
+  wh_parallel_interactive,
+  width = 500,
+  height = 350
+)
+```
+
+## 15.5.2 Rotate axis label
+
+```{r}
+parallelPlot(wh,
+             rotateTitle = TRUE)
+```
+
+### Self Trying
+
+```{r}
+parallelPlot(wh_parallel_interactive,
+             rotateTitle = TRUE)
+```
+
+## 15.5.3 Changing the colour scheme
+
+```{r}
+parallelPlot(wh,
+             continuousCS = "YlOrRd",
+             rotateTitle = TRUE)
+```
+
+### Self Trying
+
+```{r}
+parallelPlot(wh_parallel_interactive,
+             continuousCS = "YlGnBu",
+             rotateTitle = TRUE)
+```
+
+## 15.5.4 Parallel coordinates plot with histogram
+
+```{r}
+histoVisibility <- rep(TRUE, ncol(wh))
+parallelPlot(wh,
+             rotateTitle = TRUE,
+             histoVisibility = histoVisibility)
+```
+
+### Self Trying
+
+```{r}
+histoVisibility <- rep(TRUE, ncol(wh_parallel_interactive))
+parallelPlot(wh_parallel_interactive,
+             rotateTitle = TRUE,
+             histoVisibility = histoVisibility)
+```
