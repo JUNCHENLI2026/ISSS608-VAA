@@ -36,6 +36,7 @@ realis2018_summarised <- summarise(realis2018_grouped,
                           `Median Unit Price ($ psm)` = median(`Unit Price ($ psm)`, na.rm = TRUE), 
                           `Median Transacted Price` = median(`Transacted Price ($)`, na.rm = TRUE))
 ```
+
 ## 16.3.4 Grouped summaries with the pipe
 
 ```{r}
@@ -48,12 +49,14 @@ realis2018_summarised <- realis2018 %>%
             `Median Unit Price ($ psm)` = median(`Unit Price ($ psm)`, na.rm = TRUE),
             `Median Transacted Price` = median(`Transacted Price ($)`, na.rm = TRUE))
 ```
+
 ## 16.4.1 Designing a static treemap
 
 ```{r}
 realis2018_selected <- realis2018_summarised %>%
   filter(`Property Type` == "Condominium", `Type of Sale` == "Resale")
 ```
+
 ## 16.4.2 Using the basic arguments
 
 ```{r}
@@ -65,6 +68,7 @@ treemap(realis2018_selected,
         title.legend = "Median Unit Price (S$ per sq. m)"
         )
 ```
+
 ## 16.4.3 Working with vColor and type arguments
 
 ```{r}
@@ -77,6 +81,7 @@ treemap(realis2018_selected,
         title.legend = "Median Unit Price (S$ per sq. m)"
         )
 ```
+
 ## 16.4.5 The “value” type treemap
 
 ```{r}
@@ -90,6 +95,7 @@ treemap(realis2018_selected,
         title.legend = "Median Unit Price (S$ per sq. m)"
         )
 ```
+
 ## 16.4.6 The “manual” type treemap
 
 ```{r}
@@ -103,6 +109,7 @@ treemap(realis2018_selected,
         title.legend = "Median Unit Price (S$ per sq. m)"
         )
 ```
+
 ## Ex single colour palette(Blue)
 
 ```{r}
@@ -116,6 +123,7 @@ treemap(realis2018_selected,
         title.legend = "Median Unit Price (S$ per sq. m)"
         )
 ```
+
 ## 16.4.8 Working with algorithm argument
 
 ```{r}
@@ -130,6 +138,7 @@ treemap(realis2018_selected,
         title.legend = "Median Unit Price (S$ per sq. m)"
         )
 ```
+
 ## 16.4.9 Using sortID
 
 ```{r}
@@ -145,6 +154,7 @@ treemap(realis2018_selected,
         title.legend = "Median Unit Price (S$ per sq. m)"
         )
 ```
+
 ## 16.5.1 Designing a basic treemap
 
 ```{r}
@@ -156,6 +166,7 @@ ggplot(data=realis2018_selected,
   geom_treemap() +
   scale_fill_gradient(low = "light blue", high = "blue")
 ```
+
 ## 16.5.2 Defining hierarchy
 
 ```{r}
@@ -166,6 +177,7 @@ ggplot(data=realis2018_selected,
        start = "topleft") + 
   geom_treemap()
 ```
+
 ## Group by Planning Area
 
 ```{r}
@@ -176,6 +188,7 @@ ggplot(data=realis2018_selected,
            subgroup2 = `Planning Area`)) + 
   geom_treemap()
 ```
+
 ## Adding boundary line
 
 ```{r}
@@ -189,11 +202,10 @@ ggplot(data=realis2018_selected,
                                 size = 2) +
   geom_treemap_subgroup_border(colour = "gray20")
 ```
+
 ## 16.6.1 Installing d3treeR package
 
-```{r，eval=FALSE}
-install.packages("devtools")
-```
+`{r，eval=FALSE} install.packages("devtools")`
 
 ```{r,eval=FALSE}
 library(devtools)
@@ -205,6 +217,7 @@ library(d3treeR)
 ```
 
 ## 16.6.2 Designing An Interactive Treemap
+
 ```{r}
 tm <- treemap(realis2018_summarised,
         index=c("Planning Region", "Planning Area"),
@@ -336,7 +349,6 @@ treemap(
   title.legend = "Average Transacted Price (S$)"
 )
 ```
-
 
 ## 16.4.8 Self Trying: Working with algorithm argument
 
@@ -491,7 +503,9 @@ ggplot(
     fill = "Average Transacted Price"
   )
 ```
+
 ### Self Trying: Designing An Interactive Treemap
+
 ```{r}
 tm <- treemap(
   realis2018_selected,
@@ -506,8 +520,7 @@ tm <- treemap(
 ```
 
 ## Then d3tree() is used to build an interactive treemap
+
 ```{r}
 d3tree(tm,rootname = "Singapore" )
 ```
-
-

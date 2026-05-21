@@ -14,12 +14,14 @@ execute:
 
 ::: panel-tabset
 ## 4.2.1 Loading the R packages
+
 ```{r}
 pacman::p_load(readxl, gifski, gapminder,
                plotly, gganimate, tidyverse)
 ```
 
 ## 4.2.2 Importing the data
+
 ```{r}
 col <- c("Country", "Continent")
 globalPop <- read_xls("data/GlobalPopulation.xls",
@@ -33,6 +35,7 @@ globalPop <- read_xls("data/GlobalPopulation.xls",
 
 ::: panel-tabset
 ## Ex plot
+
 ```{r, echo=FALSE}
 ggplot(globalPop, aes(x = Old, y = Young, 
                       size = Population, 
@@ -47,6 +50,7 @@ ggplot(globalPop, aes(x = Old, y = Young,
 ```
 
 ## Code chunk
+
 ```{r, eval=FALSE}
 ggplot(globalPop, aes(x = Old, y = Young, 
                       size = Population, 
@@ -60,8 +64,10 @@ ggplot(globalPop, aes(x = Old, y = Young,
        y = '% Young') 
 ```
 :::
+
 ::: panel-tabset
 ## Self Trying plot
+
 ```{r, echo=FALSE}
 ggplot(globalPop, aes(x = Old, y = Young, 
                       size = Population, 
@@ -76,6 +82,7 @@ ggplot(globalPop, aes(x = Old, y = Young,
 ```
 
 ## Code chunk
+
 ```{r, eval=FALSE}
 ggplot(globalPop, aes(x = Old, y = Young, 
                       size = Population, 
@@ -91,8 +98,10 @@ ggplot(globalPop, aes(x = Old, y = Young,
 :::
 
 ## 4.3.2 Building the animated bubble plot
+
 ::: panel-tabset
 ## Ex plot
+
 ```{r, echo=FALSE}
 ggplot(globalPop, aes(x = Old, y = Young, 
                       size = Population, 
@@ -109,6 +118,7 @@ ggplot(globalPop, aes(x = Old, y = Young,
 ```
 
 ## Code chunk
+
 ```{r, eval=FALSE}
 ggplot(globalPop, aes(x = Old, y = Young, 
                       size = Population, 
@@ -127,6 +137,7 @@ ggplot(globalPop, aes(x = Old, y = Young,
 
 ::: panel-tabset
 ## Self Trying plot
+
 ```{r, echo=FALSE}
 ggplot(globalPop, aes(x = Old, y = Young, 
                       size = Population, 
@@ -143,6 +154,7 @@ ggplot(globalPop, aes(x = Old, y = Young,
 ```
 
 ## Code chunk
+
 ```{r, eval=FALSE}
 ggplot(globalPop, aes(x = Old, y = Young, 
                       size = Population, 
@@ -160,8 +172,10 @@ ggplot(globalPop, aes(x = Old, y = Young,
 :::
 
 ## 4.4.1 Building an animated bubble plot: ggplotly() method
+
 ::: panel-tabset
 ## Ex plot
+
 ```{r, echo=FALSE}
 gg <- ggplot(globalPop, 
        aes(x = Old, 
@@ -181,6 +195,7 @@ ggplotly(gg)
 ```
 
 ## Code chunk
+
 ```{r, eval=FALSE}
 gg <- ggplot(globalPop, 
        aes(x = Old, 
@@ -202,6 +217,7 @@ ggplotly(gg)
 
 ::: panel-tabset
 ## Self-trying plot
+
 ```{r, echo=FALSE}
 gg <- ggplot(globalPop, 
        aes(x = Old, 
@@ -220,8 +236,8 @@ gg <- ggplot(globalPop,
 ggplotly(gg)
 ```
 
-
 ## Code chunk
+
 ```{r, eval=FALSE}
 gg <- ggplot(globalPop, 
        aes(x = Old, 
@@ -243,6 +259,7 @@ ggplotly(gg)
 
 ::: panel-tabset
 ## Ex plot
+
 ```{r, echo=FALSE}
 gg <- ggplot(globalPop, 
        aes(x = Old, 
@@ -262,6 +279,7 @@ ggplotly(gg)
 ```
 
 ## Code chunk
+
 ```{r, eval=FALSE}
 gg <- ggplot(globalPop, 
        aes(x = Old, 
@@ -283,6 +301,7 @@ ggplotly(gg)
 
 ::: panel-tabset
 ## Self Trying plot
+
 ```{r, echo=FALSE}
 gg <- ggplot(globalPop, 
        aes(x = Old, 
@@ -302,6 +321,7 @@ ggplotly(gg)
 ```
 
 ## Code chunk
+
 ```{r, eval=FALSE}
 gg <- ggplot(globalPop, 
        aes(x = Old, 
@@ -322,8 +342,10 @@ ggplotly(gg)
 :::
 
 ## 4.4.2 Building an animated bubble plot: plot_ly() method
+
 ::: panel-tabset
 ## Ex plot
+
 ```{r, echo=FALSE}
 bp <- globalPop %>%
   plot_ly(x = ~Old, 
@@ -342,6 +364,7 @@ bp
 ```
 
 ## Code chunk
+
 ```{r, eval=FALSE}
 bp <- globalPop %>%
   plot_ly(x = ~Old, 
@@ -362,6 +385,7 @@ bp
 
 ::: panel-tabset
 ## Self-Trying plot
+
 ```{r, echo=FALSE}
 bp <- globalPop %>%
   plot_ly(x = ~Old, 
@@ -380,6 +404,7 @@ bp
 ```
 
 ## Code chunk
+
 ```{r, eval=FALSE}
 bp <- globalPop %>%
   plot_ly(x = ~Old, 
@@ -397,4 +422,3 @@ bp <- globalPop %>%
 bp
 ```
 :::
-
