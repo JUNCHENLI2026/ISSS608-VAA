@@ -1707,7 +1707,6 @@ Overall, the quadrant chart confirms that COMP_N is the most important high-risk
 ### 7.3 Interactive Segment-Level Visualisation
 
 ::: panel-tabset
-
 ### The plot
 
 ```{r, echo=FALSE}
