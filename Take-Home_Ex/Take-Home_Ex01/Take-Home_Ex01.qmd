@@ -1213,6 +1213,21 @@ fuel_summary
 ### The plot
 
 ```{r, echo=FALSE}
+fuel_summary <- motor_clean %>%
+  group_by(fuel_type) %>%
+  summarise(
+    n = n(),
+    premium = sum(total_premium, na.rm = TRUE),
+    incurred = sum(total_incurred, na.rm = TRUE),
+    claims = sum(total_claims, na.rm = TRUE),
+    exposure = sum(total_exposure, na.rm = TRUE),
+    profit = premium - incurred,
+    loss_ratio = incurred / premium,
+    claim_frequency = claims / exposure,
+    claim_severity = incurred / claims,
+    .groups = "drop"
+  )
+
 fuel_long <- fuel_summary %>%
   select(fuel_type, loss_ratio, claim_frequency, claim_severity) %>%
   pivot_longer(
@@ -1223,37 +1238,63 @@ fuel_long <- fuel_summary %>%
   mutate(
     metric = recode(
       metric,
-      "loss_ratio" = "Loss Ratio",
       "claim_frequency" = "Claim Frequency",
-      "claim_severity" = "Claim Severity"
+      "claim_severity" = "Claim Severity",
+      "loss_ratio" = "Loss Ratio"
     ),
     label = case_when(
-      metric == "Loss Ratio" ~ percent(value, accuracy = 0.1),
-      metric == "Claim Frequency" ~ round(value, 3) %>% as.character(),
-      metric == "Claim Severity" ~ dollar(value, accuracy = 1)
+      metric == "Claim Frequency" ~ as.character(round(value, 3)),
+      metric == "Claim Severity" ~ dollar(value, accuracy = 1),
+      metric == "Loss Ratio" ~ percent(value, accuracy = 0.1)
     )
   )
 
-ggplot(fuel_long, aes(x = fuel_type, y = value)) +
-  geom_col() +
+ggplot(fuel_long, aes(x = fuel_type, y = value, fill = fuel_type)) +
+  geom_col(width = 0.7) +
   geom_text(
     aes(label = label),
-    vjust = -0.3,
-    size = 3.5
+    vjust = -0.35,
+    size = 3.6
   ) +
   facet_wrap(~ metric, scales = "free_y") +
+  scale_fill_manual(
+    values = c(
+      "D" = "#D95F02",
+      "G" = "#1B9E77"
+    )
+  ) +
   labs(
     title = "Fuel Type and Claim Risk",
     subtitle = "Diesel vehicles show weaker profitability mainly because of higher claim frequency",
     x = "Fuel Type",
     y = NULL
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    strip.text = element_text(face = "bold"),
+    plot.title = element_text(face = "bold")
+  )
 ```
 
 ### The Code
 
 ```{r, eval=FALSE}
+fuel_summary <- motor_clean %>%
+  group_by(fuel_type) %>%
+  summarise(
+    n = n(),
+    premium = sum(total_premium, na.rm = TRUE),
+    incurred = sum(total_incurred, na.rm = TRUE),
+    claims = sum(total_claims, na.rm = TRUE),
+    exposure = sum(total_exposure, na.rm = TRUE),
+    profit = premium - incurred,
+    loss_ratio = incurred / premium,
+    claim_frequency = claims / exposure,
+    claim_severity = incurred / claims,
+    .groups = "drop"
+  )
+
 fuel_long <- fuel_summary %>%
   select(fuel_type, loss_ratio, claim_frequency, claim_severity) %>%
   pivot_longer(
@@ -1264,40 +1305,51 @@ fuel_long <- fuel_summary %>%
   mutate(
     metric = recode(
       metric,
-      "loss_ratio" = "Loss Ratio",
       "claim_frequency" = "Claim Frequency",
-      "claim_severity" = "Claim Severity"
+      "claim_severity" = "Claim Severity",
+      "loss_ratio" = "Loss Ratio"
     ),
     label = case_when(
-      metric == "Loss Ratio" ~ percent(value, accuracy = 0.1),
-      metric == "Claim Frequency" ~ round(value, 3) %>% as.character(),
-      metric == "Claim Severity" ~ dollar(value, accuracy = 1)
+      metric == "Claim Frequency" ~ as.character(round(value, 3)),
+      metric == "Claim Severity" ~ dollar(value, accuracy = 1),
+      metric == "Loss Ratio" ~ percent(value, accuracy = 0.1)
     )
   )
 
-ggplot(fuel_long, aes(x = fuel_type, y = value)) +
-  geom_col() +
+ggplot(fuel_long, aes(x = fuel_type, y = value, fill = fuel_type)) +
+  geom_col(width = 0.7) +
   geom_text(
     aes(label = label),
-    vjust = -0.3,
-    size = 3.5
+    vjust = -0.35,
+    size = 3.6
   ) +
   facet_wrap(~ metric, scales = "free_y") +
+  scale_fill_manual(
+    values = c(
+      "D" = "#D95F02",
+      "G" = "#1B9E77"
+    )
+  ) +
   labs(
     title = "Fuel Type and Claim Risk",
     subtitle = "Diesel vehicles show weaker profitability mainly because of higher claim frequency",
     x = "Fuel Type",
     y = NULL
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    strip.text = element_text(face = "bold"),
+    plot.title = element_text(face = "bold")
+  )
 ```
 :::
 
-The fuel type analysis shows that diesel vehicles have a higher claim frequency and higher loss ratio than gasoline vehicles. Diesel vehicles have a claim frequency of around 0.34, while gasoline vehicles have a claim frequency of around 0.25. This means that diesel vehicles generate claims more often per unit of exposure.
+The fuel type analysis compares claim frequency, claim severity, and loss ratio between diesel and gasoline vehicles. Diesel vehicles have a higher claim frequency of 0.342, compared with 0.246 for gasoline vehicles. Diesel vehicles also have a higher loss ratio of 73.1%, while gasoline vehicles have a lower loss ratio of 64.3%.
 
-However, the claim severity of diesel and gasoline vehicles is very similar. This suggests that the weaker profitability of diesel vehicles is not mainly caused by larger individual claim costs. Instead, it is mainly driven by more frequent claim occurrence.
+However, claim severity is almost identical between the two groups. Diesel vehicles have an average claim severity of $959, while gasoline vehicles have an average claim severity of $960. This means that diesel vehicles do not generate more expensive claims on average. Instead, they generate claims more often.
 
-From an underwriting perspective, this finding is useful because frequency-driven risk and severity-driven risk require different responses. For diesel vehicles, the insurer may need to review customer usage patterns, vehicle usage intensity, or pricing adequacy, rather than focusing only on repair cost per claim.
+This finding suggests that the weaker profitability of diesel vehicles is mainly frequency-driven rather than severity-driven. From an underwriting perspective, this is useful because frequency-driven risk and severity-driven risk require different management responses. For diesel vehicles, the insurer may need to review vehicle usage intensity, customer driving patterns, policy type composition, or pricing adequacy, rather than focusing only on repair cost per claim.
 
 ### 6.5 Driver Age and Loss Ratio
 
@@ -1987,7 +2039,9 @@ Sixth, policy status is strongly associated with profitability. Policy status C 
 
 Seventh, payment frequency is associated with different profitability patterns. Annual payment policies have the lowest loss ratio at 67.9%, while quarterly and semi-annual payment policies have higher loss ratios of 76.4% and 80.7%, respectively. This suggests that non-annual payment groups may have weaker profitability.
 
-Eighth, diesel vehicles show higher claim frequency and higher loss ratio than gasoline vehicles. However, claim severity is similar between diesel and gasoline vehicles. This suggests that diesel vehicles are mainly a frequency-driven risk segment rather than a severity-driven risk segment.
+Eighth, diesel vehicles show weaker profitability than gasoline vehicles, but the difference is mainly frequency-driven. Diesel vehicles have a higher claim frequency of 0.342 compared with 0.246 for gasoline vehicles. However, claim severity is almost identical between the two groups, at approximately $959 for diesel vehicles and $960 for gasoline vehicles. This suggests that diesel vehicles do not generate more expensive claims on average; instead, they generate claims more often.
+
+Ninth, driver age and vehicle age show non-linear profitability patterns. For driver age, the 26–35, 36–45, and 66+ groups have relatively higher loss ratios, while the 18–25 group has the lowest loss ratio. For vehicle age, the 0–5 and 11–20 groups show weaker profitability than older vehicle groups.
 
 Finally, the advanced visual analytics reveal more specific high-risk combinations. The risk heatmap shows that COMP_N policies with semi-annual payment have a loss ratio of 108.8%, making this segment loss-making. The premium adequacy quadrant also confirms that COMP_N is located in the high-frequency and high-loss-ratio area.
 
@@ -2005,7 +2059,9 @@ Fourth, the rising yearly loss ratio suggests that the insurer should monitor pr
 
 Fifth, the claim concentration result suggests that tail-risk monitoring should be included in regular portfolio review. A small number of large-loss policies can have a significant effect on total incurred claims. Therefore, large-loss policies should be analysed separately to identify whether they are concentrated in specific policy types, vehicle age groups, fuel types, or payment frequency groups.
 
-Finally, diesel vehicles and non-annual payment groups should be monitored as potential risk indicators. The findings should not be interpreted as causal evidence, but they provide useful segmentation signals for further underwriting and pricing investigation.
+Sixth, diesel vehicles should be monitored as a frequency-driven risk segment. The analysis shows that diesel vehicles have higher claim frequency and higher loss ratio than gasoline vehicles, while claim severity is almost the same. This means the insurer should investigate vehicle usage intensity, customer driving patterns, exposure characteristics, or policy type composition for diesel vehicles, rather than focusing only on repair cost per claim.
+
+Finally, non-annual payment groups should also be monitored as potential risk indicators. Quarterly and semi-annual payment groups have higher loss ratios than annual payment policies. This result should not be interpreted as causal evidence, but it provides a useful segmentation signal for further underwriting and pricing investigation.
 
 ## 11. Limitations
 
@@ -2027,9 +2083,13 @@ In conclusion, this take-home exercise demonstrates how visual analytics can be 
 
 The analysis shows that the portfolio is profitable overall, but profitability deteriorated from 2022 to 2024. The loss ratio increased to 74.7% in 2024, indicating that claim costs became heavier relative to premium income. Frequency-severity decomposition further shows that this deterioration is related to both higher claim frequency and a rebound in claim severity.
 
-The segment-level analysis reveals that profitability problems are not evenly distributed across the portfolio. COMP_N is the most concerning policy type because it has both the highest loss ratio and the highest claim frequency. Policy status C is also a loss-making segment, with a loss ratio of 128.0%. Diesel vehicles and non-annual payment policies also show weaker profitability patterns.
+The segment-level analysis reveals that profitability problems are not evenly distributed across the portfolio. COMP_N is the most concerning policy type because it has both the highest loss ratio and the highest claim frequency. Policy status C is also a clear loss-making segment, with a loss ratio of 128.0%. Payment frequency, driver age, vehicle age, and fuel type also provide useful segmentation signals.
+
+The fuel type analysis shows the value of separating claim frequency from claim severity. Diesel vehicles have weaker profitability than gasoline vehicles, but their claim severity is almost identical. Their weaker performance is mainly driven by more frequent claim occurrence rather than larger individual claim costs. This demonstrates why frequency-severity decomposition is important for insurance portfolio analysis.
 
 The advanced visual analytics provide more detailed insights. The risk heatmap identifies COMP_N with semi-annual payment as a specific loss-making segment, while the premium adequacy quadrant confirms that COMP_N is located in the high-frequency and high-loss-ratio area. The interactive chart further supports exploratory investigation by allowing users to inspect loss ratio, claim frequency, claim severity, premium volume, and profit at the segment level.
+
+Overall, this report shows that visual analytics can move insurance analysis beyond simple dashboard reporting. It helps identify where profitability problems are concentrated, explains whether weak performance is frequency-driven or severity-driven, and supports more targeted underwriting, pricing, and portfolio management decisions.
 
 Overall, this report shows that visual analytics can move insurance analysis beyond simple dashboard reporting. It helps identify where profitability problems are concentrated, explains whether weak performance is frequency-driven or severity-driven, and supports more targeted underwriting, pricing, and portfolio management decisions.
 
@@ -2050,3 +2110,5 @@ Overall, this report shows that visual analytics can move insurance analysis bey
 - [Quarto HTML Documentation.](https://quarto.org/docs/output-formats/html-basics.html)
 
 - [Quarto Revealjs Documentation.](https://quarto.org/docs/presentations/revealjs/)
+
+
