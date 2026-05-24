@@ -51,7 +51,8 @@ pacman::p_load(
   ggthemes,
   plotly,
   DT,
-  broom
+  broom,
+  DiagrammeR
 )
 
 theme_set(theme_minimal())
@@ -202,7 +203,97 @@ The most important derived variables are profit, loss ratio, claim frequency, an
 
 Loss ratio is used as the main profitability measure. Claim frequency and claim severity are used to decompose claim risk into two components: how often claims occur and how expensive each claim is. This distinction is important because two segments may have similar loss ratios but very different risk structures.
 
+### 3.7 Analytical Workflow Map
+
+```{r, echo=FALSE}
+library(DiagrammeR)
+
+grViz("
+digraph workflow {
+
+  graph [
+    layout = dot,
+    rankdir = TB,
+    bgcolor = transparent
+  ]
+
+  node [
+    shape = box,
+    style = filled,
+    fontname = Arial,
+    fontsize = 13,
+    color = '#5DADE2',
+    fillcolor = '#D6EAF8',
+    fontcolor = '#102A43'
+  ]
+
+  edge [
+    color = '#FFFFFF',
+    arrowsize = 0.7
+  ]
+
+  A [label = 'Raw Motor Insurance Data', fillcolor = '#D6EAF8', color = '#5DADE2']
+  B [label = 'Data Cleaning', fillcolor = '#D5F5E3', color = '#58D68D']
+  C [label = 'Feature Engineering', fillcolor = '#D5F5E3', color = '#58D68D']
+
+  C1 [label = 'Loss Ratio', fillcolor = '#FCF3CF', color = '#F4D03F']
+  C2 [label = 'Claim Frequency', fillcolor = '#FCF3CF', color = '#F4D03F']
+  C3 [label = 'Claim Severity', fillcolor = '#FCF3CF', color = '#F4D03F']
+  C4 [label = 'Profit', fillcolor = '#FCF3CF', color = '#F4D03F']
+
+  D [label = 'Portfolio Trend', fillcolor = '#E8DAEF', color = '#AF7AC5']
+  E [label = 'Segment Analysis', fillcolor = '#E8DAEF', color = '#AF7AC5']
+  F [label = 'Policy Type / Status / Payment / Fuel / Age Groups', fillcolor = '#E8DAEF', color = '#AF7AC5']
+
+  G [label = 'Key Findings', fillcolor = '#FADBD8', color = '#EC7063']
+  H [label = 'Pricing and Underwriting Implications', fillcolor = '#FADBD8', color = '#EC7063']
+
+  A -> B
+  B -> C
+
+  C -> C1
+  C -> C2
+  C -> C3
+  C -> C4
+
+  C1 -> D
+  C2 -> D
+  C3 -> D
+
+  C1 -> E
+  C2 -> E
+  C3 -> E
+
+  E -> F
+  D -> G
+  F -> G
+  G -> H
+}
+")
+```
+
+
+The analytical workflow map summarises how the raw motor insurance portfolio dataset is transformed into a visual analytics report. The process begins with data wrangling, including column name cleaning, duplicate checking, missing value checking, and removal of missing observations in key variables.
+
+After cleaning the data, several insurance-specific metrics are created, including profit, loss ratio, claim frequency, and claim severity. These variables are central to the analysis because they allow the report to evaluate not only whether the portfolio is profitable, but also whether weak performance is driven by frequent claims or expensive claims.
+
+The workflow then moves from portfolio-level analysis to segment-level analysis and advanced visual analytics. This structure supports a clear analytical logic: first identifying the overall profitability trend, then locating high-risk segments, and finally translating the findings into pricing, underwriting, and tail-risk monitoring implications.
+
 ## 4. Portfolio-Level Visual Analytics
+
+This section uses portfolio-level visual analytics to examine the overall profitability trend of the insurance portfolio. The analysis begins with yearly aggregation because the raw dataset is policy-level, while profitability deterioration is easier to observe at the portfolio-year level.
+
+The group_by() and summarise() functions in the dplyr package are used to aggregate total premium, total incurred claims, total claims, and exposure by year. The ggplot() function in the ggplot2 package is then used to create bar charts comparing yearly loss ratios and yearly premium-claim movements. The scales package is used to format loss ratios as percentages and monetary values as currency.
+
+::: {.observation-box}
+### Observations
+
+1. The dataset is suitable for motor insurance portfolio analysis because it contains premium income, incurred claims, claim counts, exposure, policy characteristics, driver information, and vehicle information.
+
+2. Several insurance-specific analytical variables are created, including `profit`, `loss_ratio`, `claim_frequency`, and `claim_severity`. These variables transform the raw data into a more meaningful analytical sandbox for profitability and risk analysis.
+
+3. Driver age, vehicle age, and vehicle value are grouped into categorical segments to support clearer visual comparison across risk groups.
+:::
 
 ### 4.1 Overall Portfolio Profitability
 
@@ -400,7 +491,23 @@ year_growth
 
 The growth-rate comparison further confirms that incurred claims increased faster than premium income in 2024, which explains the deterioration in the yearly loss ratio.
 
+::: {.insight-box}
+### Portfolio-Level Insights
+
+- The portfolio remains profitable overall, but profitability weakened over time.
+
+- The yearly loss ratio increased from 65.7% in 2022 to 66.5% in 2023, and then to 74.7% in 2024.
+
+- Both premium income and incurred claims increased from 2022 to 2024, but incurred claims grew faster relative to premium income in 2024.
+
+- Business growth does not necessarily improve profitability if claim costs grow faster than premium income.
+:::
+
 ## 5. Claim Distribution and Volatility
+
+This section examines the distribution of claim costs and loss ratios to understand portfolio volatility. Insurance claim data are usually highly skewed because most policies have no or small claims, while a small number of policies generate very large losses. Therefore, distributional visualisation is important before conducting segment-level analysis.
+
+The filter() function is used to focus on policies with positive incurred claims where appropriate. The geom_histogram() function is used to visualise claim cost and loss ratio distributions. For total incurred claims, scale_x_log10() is applied because the original claim amount distribution is highly right-skewed. A claim concentration curve is also created to assess whether a small share of high-loss policies accounts for a large share of total incurred claims.
 
 ### 5.1 Distribution of Total Incurred Claims
 
@@ -818,7 +925,23 @@ This finding helps explain the earlier yearly loss ratio result. The portfolio l
 
 The 2024 profitability deterioration is not only a premium issue; it is also related to higher claim frequency and a rebound in claim severity.
 
+::: {.insight-box}
+### Claim Volatility Insights
+
+- Claim costs are highly right-skewed, meaning that most policies generate small or no claims, while a small number of policies generate very large losses.
+
+- The original loss ratio distribution is heavily concentrated at zero because many policies have no incurred claims. Separating claim occurrence from positive loss ratio distribution provides a clearer view of claim-generating policies.
+
+- The claim concentration curve shows that portfolio volatility is strongly influenced by tail-risk observations.
+
+- Frequency-severity decomposition shows that the 2024 deterioration is related to both higher claim frequency and a rebound in claim severity.
+:::
+
 ## 6. Segment-Level Profitability Analysis
+
+This section applies bivariate visual analytics to compare profitability and claim risk across key policy, vehicle, and driver segments. The main objective is to identify whether high loss ratios are concentrated in specific groups.
+
+For each segment, the data are aggregated using group_by() and summarise(). Loss ratio, claim frequency, and claim severity are calculated at the segment level. Bar charts created using geom_col() are used to compare loss ratios across categories. In several charts, benchmark lines are added to represent either the 100% break-even loss ratio or the overall portfolio loss ratio. This makes it easier to identify segments with weaker-than-average profitability.
 
 ### 6.1 Policy Type and Profitability
 
@@ -1189,6 +1312,10 @@ From an insurance management perspective, payment frequency can be useful as a s
 This finding also connects with the later risk heatmap, where payment frequency is combined with policy type to identify whether high loss ratios are concentrated in specific product-payment combinations.
 
 ### 6.4 Fuel Type and Claim Risk
+For fuel type, the analysis compares loss ratio, claim frequency, and claim severity within the same visualisation. The pivot_longer() function is used to transform the segment-level summary table into a long format, so that the three metrics can be displayed using facet_wrap(). This design allows the comparison of profitability, claim occurrence, and average claim size side by side.
+
+This approach is useful because a higher loss ratio can be caused by either higher claim frequency or higher claim severity. By showing all three metrics together, the chart helps identify whether fuel-type risk is frequency-driven or severity-driven.
+
 
 ```{r}
 fuel_summary <- motor_clean %>%
@@ -1557,9 +1684,31 @@ This result suggests that vehicle age is associated with profitability, but olde
 
 From an underwriting perspective, vehicle age should be analysed together with claim frequency and claim severity. If newer vehicles have higher loss ratios because of higher repair costs, the risk is severity-driven. If middle-aged vehicles have higher loss ratios because they claim more often, the risk is frequency-driven. Therefore, vehicle age is useful as a segmentation variable, but further frequency-severity analysis is needed before making pricing or underwriting decisions.
 
+::: {.insight-box}
+### Segment-Level Insights
+
+- `COMP_N` is the most concerning policy type because it has both the highest loss ratio at 93.5% and the highest claim frequency at 1.04.
+
+- Policy status `C` is a clear loss-making segment, with a loss ratio of 128.0%. This means claim costs exceed premium income for this group.
+
+- Non-annual payment groups show weaker profitability. Annual payment policies have the lowest loss ratio at 67.9%, while quarterly and semi-annual payment policies have higher loss ratios of 76.4% and 80.7%.
+
+- Diesel vehicles have weaker profitability mainly because of higher claim frequency. Claim severity is almost identical between diesel and gasoline vehicles, suggesting that fuel-type risk is frequency-driven rather than severity-driven.
+
+- Driver age and vehicle age show non-linear profitability patterns. Therefore, they should be interpreted together with other risk indicators rather than in isolation.
+:::
+
 ## 7. Advanced Visual Analytics
 
+This section extends the analysis beyond one-variable bar charts by using advanced visual analytics techniques. The purpose is to identify high-risk segment combinations and to provide a more interactive view of portfolio performance.
+
+A heatmap is used to combine policy type and payment frequency in one visualisation. This helps identify whether high loss ratios are concentrated in specific product-payment combinations. A quadrant chart is then used to compare claim frequency and loss ratio at the same time, with bubble size representing premium volume. Finally, an interactive plotly chart is created to allow users to inspect detailed segment-level information through tooltips.
+
 ### 7.1 Risk Heatmap by Policy Type and Payment Frequency
+
+The risk heatmap is created by grouping the data by policy type and payment frequency. The geom_tile() function is used to display each segment as a cell, while fill colour represents the segment-level loss ratio. The geom_text() function is used to place the loss ratio value inside each cell.
+
+This visual design is useful because it allows two categorical variables to be examined simultaneously. It can reveal high-risk combinations that may be hidden when policy type and payment frequency are analysed separately.
 
 ```{r}
 risk_heatmap <- motor_clean %>%
@@ -1650,7 +1799,23 @@ From an insurance management perspective, this heatmap helps prioritise underwri
 
 Overall, the heatmap reveals that profitability problems are not evenly distributed across the portfolio. The highest-risk segment is not simply COMP_N as a whole, but specifically COMP_N policies with semi-annual payment frequency.
 
+::: {.warning-box}
+### Key Risk Segment
+
+- The heatmap identifies `COMP_N + S` as the highest-risk segment.
+
+- `COMP_N + S` has a loss ratio of 108.8%, which is above the 100% break-even threshold.
+
+- This means that claim costs exceed premium income for this specific product-payment combination.
+
+- The result shows that the profitability problem is not only `COMP_N` as a broad policy type, but more specifically `COMP_N` with semi-annual payment frequency.
+:::
+
 ### 7.2 Premium Adequacy Quadrant
+
+The premium adequacy quadrant is created to compare claim frequency and loss ratio at the same time. Each point represents one policy type. The x-axis shows claim frequency, the y-axis shows loss ratio, and bubble size represents premium volume.
+
+The horizontal dashed line represents the overall portfolio loss ratio, while the vertical dashed line represents the overall portfolio claim frequency. These reference lines divide the plot into different risk zones. Policy types in the upper-right area have both above-average claim frequency and above-average loss ratio, making them priority segments for pricing and underwriting review.
 
 ::: panel-tabset
 ### The plot
@@ -1757,6 +1922,10 @@ From an insurance management perspective, this quadrant chart is more useful tha
 Overall, the quadrant chart confirms that COMP_N is the most important high-risk segment because it combines high claim frequency, high loss ratio, and meaningful premium volume. This makes it a priority candidate for pricing review and underwriting refinement.
 
 ### 7.3 Interactive Segment-Level Visualisation
+
+The interactive visualisation is created using ggplotly() from the plotly package. The original ggplot object is converted into an interactive chart, allowing users to hover over each point and inspect detailed information such as loss ratio, claim frequency, claim severity, premium income, and profit.
+
+This is useful for exploratory visual analytics because insurance portfolio review often requires comparing multiple performance indicators at the same time. The interactive chart allows users to move from a broad visual pattern to detailed segment-level information.
 
 ::: panel-tabset
 ### The plot
@@ -1885,6 +2054,18 @@ This interactive design is useful because insurance portfolio review often requi
 From a visual analytics perspective, the interactive chart supports deeper exploration beyond dashboard reporting. It allows the analyst to move from a broad pattern to specific segment details. This is especially useful for identifying policy types that combine high premium volume, high claim frequency, and weak profitability. These segments should be prioritised for pricing review, underwriting refinement, or further claim driver investigation.
 
 Overall, the interactive chart confirms that COMP_N is the most concerning policy type because it is located in the high-frequency and high-loss-ratio area. It also shows that some policy types with weaker profitability still generate positive profit because of their premium volume. Therefore, interactive visual analytics helps balance risk, profitability, and business scale in portfolio review.
+
+::: {.insight-box}
+### Advanced Visual Analytics Insights
+
+- The risk heatmap reveals that profitability problems are concentrated in specific product-payment combinations.
+
+- The premium adequacy quadrant confirms that `COMP_N` is located in the high-frequency and high-loss-ratio area.
+
+- The interactive visualisation allows users to inspect loss ratio, claim frequency, claim severity, premium volume, and profit at the same time.
+
+- Together, these advanced visualisations move the analysis beyond simple dashboard reporting and provide more actionable support for pricing and underwriting review.
+:::
 
 ## 8. Statistical Validation
 

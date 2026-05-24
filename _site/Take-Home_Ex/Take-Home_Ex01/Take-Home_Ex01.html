@@ -111,6 +111,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <script src="../../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
 
+<script src="../../site_libs/viz-1.8.2/viz.js"></script>
+
+<link href="../../site_libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+
+<script src="../../site_libs/grViz-binding-1.0.12/grViz.js"></script>
+
 <script src="../../site_libs/plotly-binding-4.12.0/plotly.js"></script>
 
 <script src="../../site_libs/typedarray-0.1/typedarray.min.js"></script>
@@ -216,6 +222,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">Take-Home Exercise 1</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../../Take-Home_Ex/Take-Home_Ex01/executive_summary.html">
+ <span class="dropdown-text">Take-Home Exercise 1 Executive Summary</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../../Take-Home_Ex/Take-Home_Ex02/Take-Home_Ex02.html">
  <span class="dropdown-text">Take-Home Exercise 2</span></a>
   </li>  
@@ -267,12 +277,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#checking-duplicates-and-missing-values" id="toc-checking-duplicates-and-missing-values" class="nav-link" data-scroll-target="#checking-duplicates-and-missing-values">3.4 Checking Duplicates and Missing Values</a></li>
   <li><a href="#creating-analytically-insurance-metrics" id="toc-creating-analytically-insurance-metrics" class="nav-link" data-scroll-target="#creating-analytically-insurance-metrics">3.5 Creating Analytically Insurance Metrics</a></li>
   <li><a href="#grouping-driver-age-vehicle-age-and-vehicle-value" id="toc-grouping-driver-age-vehicle-age-and-vehicle-value" class="nav-link" data-scroll-target="#grouping-driver-age-vehicle-age-and-vehicle-value">3.6 Grouping Driver Age, Vehicle Age, and Vehicle Value</a></li>
+  <li><a href="#analytical-workflow-map" id="toc-analytical-workflow-map" class="nav-link" data-scroll-target="#analytical-workflow-map">3.7 Analytical Workflow Map</a></li>
   </ul></li>
   <li><a href="#portfolio-level-visual-analytics" id="toc-portfolio-level-visual-analytics" class="nav-link" data-scroll-target="#portfolio-level-visual-analytics">4. Portfolio-Level Visual Analytics</a>
   <ul class="collapse">
+  <li><a href="#observations" id="toc-observations" class="nav-link" data-scroll-target="#observations">Observations</a></li>
   <li><a href="#overall-portfolio-profitability" id="toc-overall-portfolio-profitability" class="nav-link" data-scroll-target="#overall-portfolio-profitability">4.1 Overall Portfolio Profitability</a></li>
   <li><a href="#yearly-trend-in-loss-ratio" id="toc-yearly-trend-in-loss-ratio" class="nav-link" data-scroll-target="#yearly-trend-in-loss-ratio">4.2 Yearly Trend in Loss Ratio</a></li>
   <li><a href="#premium-growth-versus-claim-cost-growth" id="toc-premium-growth-versus-claim-cost-growth" class="nav-link" data-scroll-target="#premium-growth-versus-claim-cost-growth">4.3 Premium Growth versus Claim Cost Growth</a></li>
+  <li><a href="#portfolio-level-insights" id="toc-portfolio-level-insights" class="nav-link" data-scroll-target="#portfolio-level-insights">Portfolio-Level Insights</a></li>
   </ul></li>
   <li><a href="#claim-distribution-and-volatility" id="toc-claim-distribution-and-volatility" class="nav-link" data-scroll-target="#claim-distribution-and-volatility">5. Claim Distribution and Volatility</a>
   <ul class="collapse">
@@ -280,6 +293,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#distribution-of-loss-ratio" id="toc-distribution-of-loss-ratio" class="nav-link" data-scroll-target="#distribution-of-loss-ratio">5.2 Distribution of Loss Ratio</a></li>
   <li><a href="#claim-concentration-and-tail-risk" id="toc-claim-concentration-and-tail-risk" class="nav-link" data-scroll-target="#claim-concentration-and-tail-risk">5.3 Claim Concentration and Tail Risk</a></li>
   <li><a href="#frequency-severity-decomposition-by-year" id="toc-frequency-severity-decomposition-by-year" class="nav-link" data-scroll-target="#frequency-severity-decomposition-by-year">5.4 Frequency-Severity Decomposition by Year</a></li>
+  <li><a href="#claim-volatility-insights" id="toc-claim-volatility-insights" class="nav-link" data-scroll-target="#claim-volatility-insights">Claim Volatility Insights</a></li>
   </ul></li>
   <li><a href="#segment-level-profitability-analysis" id="toc-segment-level-profitability-analysis" class="nav-link" data-scroll-target="#segment-level-profitability-analysis">6. Segment-Level Profitability Analysis</a>
   <ul class="collapse">
@@ -292,12 +306,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#fuel-type-and-claim-risk" id="toc-fuel-type-and-claim-risk" class="nav-link" data-scroll-target="#fuel-type-and-claim-risk">6.4 Fuel Type and Claim Risk</a></li>
   <li><a href="#driver-age-and-loss-ratio" id="toc-driver-age-and-loss-ratio" class="nav-link" data-scroll-target="#driver-age-and-loss-ratio">6.5 Driver Age and Loss Ratio</a></li>
   <li><a href="#vehicle-age-and-loss-ratio" id="toc-vehicle-age-and-loss-ratio" class="nav-link" data-scroll-target="#vehicle-age-and-loss-ratio">6.6 Vehicle Age and Loss Ratio</a></li>
+  <li><a href="#segment-level-insights" id="toc-segment-level-insights" class="nav-link" data-scroll-target="#segment-level-insights">Segment-Level Insights</a></li>
   </ul></li>
   <li><a href="#advanced-visual-analytics" id="toc-advanced-visual-analytics" class="nav-link" data-scroll-target="#advanced-visual-analytics">7. Advanced Visual Analytics</a>
   <ul class="collapse">
   <li><a href="#risk-heatmap-by-policy-type-and-payment-frequency" id="toc-risk-heatmap-by-policy-type-and-payment-frequency" class="nav-link" data-scroll-target="#risk-heatmap-by-policy-type-and-payment-frequency">7.1 Risk Heatmap by Policy Type and Payment Frequency</a></li>
+  <li><a href="#key-risk-segment" id="toc-key-risk-segment" class="nav-link" data-scroll-target="#key-risk-segment">Key Risk Segment</a></li>
   <li><a href="#premium-adequacy-quadrant" id="toc-premium-adequacy-quadrant" class="nav-link" data-scroll-target="#premium-adequacy-quadrant">7.2 Premium Adequacy Quadrant</a></li>
   <li><a href="#interactive-segment-level-visualisation" id="toc-interactive-segment-level-visualisation" class="nav-link" data-scroll-target="#interactive-segment-level-visualisation">7.3 Interactive Segment-Level Visualisation</a></li>
+  <li><a href="#advanced-visual-analytics-insights" id="toc-advanced-visual-analytics-insights" class="nav-link" data-scroll-target="#advanced-visual-analytics-insights">Advanced Visual Analytics Insights</a></li>
   </ul></li>
   <li><a href="#statistical-validation" id="toc-statistical-validation" class="nav-link" data-scroll-target="#statistical-validation">8. Statistical Validation</a>
   <ul class="collapse">
@@ -393,10 +410,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  ggthemes,</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  plotly,</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  DT,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  broom</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  broom,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  DiagrammeR</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The tidyverse family of packages is used for data importing, wrangling, transformation, and visualization. The janitor package is used to standardize column names and check data quality. The scales package is used to format percentage and currency values in charts. The plot package is used to create an interactive visualization as an extension of ggplot2. The broom package is used to present model outputs in a tidy format.</p>
 </section>
@@ -655,9 +673,31 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <p>The most important derived variables are profit, loss ratio, claim frequency, and claim severity. These variables are necessary because the original dataset only provides raw premium and claim information. By transforming the raw variables into insurance performance indicators, the analysis can evaluate not only whether the portfolio is profitable, but also why some segments are less profitable than others.</p>
 <p>Loss ratio is used as the main profitability measure. Claim frequency and claim severity are used to decompose claim risk into two components: how often claims occur and how expensive each claim is. This distinction is important because two segments may have similar loss ratios but very different risk structures.</p>
 </section>
+<section id="analytical-workflow-map" class="level3">
+<h3 class="anchored" data-anchor-id="analytical-workflow-map">3.7 Analytical Workflow Map</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div class="grViz html-widget html-fill-item" id="htmlwidget-27801373f12bdf17f4c8" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-27801373f12bdf17f4c8">{"x":{"diagram":"\ndigraph workflow {\n\n  graph [\n    layout = dot,\n    rankdir = TB,\n    bgcolor = transparent\n  ]\n\n  node [\n    shape = box,\n    style = filled,\n    fontname = Arial,\n    fontsize = 13,\n    color = \"#5DADE2\",\n    fillcolor = \"#D6EAF8\",\n    fontcolor = \"#102A43\"\n  ]\n\n  edge [\n    color = \"#FFFFFF\",\n    arrowsize = 0.7\n  ]\n\n  A [label = \"Raw Motor Insurance Data\", fillcolor = \"#D6EAF8\", color = \"#5DADE2\"]\n  B [label = \"Data Cleaning\", fillcolor = \"#D5F5E3\", color = \"#58D68D\"]\n  C [label = \"Feature Engineering\", fillcolor = \"#D5F5E3\", color = \"#58D68D\"]\n\n  C1 [label = \"Loss Ratio\", fillcolor = \"#FCF3CF\", color = \"#F4D03F\"]\n  C2 [label = \"Claim Frequency\", fillcolor = \"#FCF3CF\", color = \"#F4D03F\"]\n  C3 [label = \"Claim Severity\", fillcolor = \"#FCF3CF\", color = \"#F4D03F\"]\n  C4 [label = \"Profit\", fillcolor = \"#FCF3CF\", color = \"#F4D03F\"]\n\n  D [label = \"Portfolio Trend\", fillcolor = \"#E8DAEF\", color = \"#AF7AC5\"]\n  E [label = \"Segment Analysis\", fillcolor = \"#E8DAEF\", color = \"#AF7AC5\"]\n  F [label = \"Policy Type / Status / Payment / Fuel / Age Groups\", fillcolor = \"#E8DAEF\", color = \"#AF7AC5\"]\n\n  G [label = \"Key Findings\", fillcolor = \"#FADBD8\", color = \"#EC7063\"]\n  H [label = \"Pricing and Underwriting Implications\", fillcolor = \"#FADBD8\", color = \"#EC7063\"]\n\n  A -> B\n  B -> C\n\n  C -> C1\n  C -> C2\n  C -> C3\n  C -> C4\n\n  C1 -> D\n  C2 -> D\n  C3 -> D\n\n  C1 -> E\n  C2 -> E\n  C3 -> E\n\n  E -> F\n  D -> G\n  F -> G\n  G -> H\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>The analytical workflow map summarises how the raw motor insurance portfolio dataset is transformed into a visual analytics report. The process begins with data wrangling, including column name cleaning, duplicate checking, missing value checking, and removal of missing observations in key variables.</p>
+<p>After cleaning the data, several insurance-specific metrics are created, including profit, loss ratio, claim frequency, and claim severity. These variables are central to the analysis because they allow the report to evaluate not only whether the portfolio is profitable, but also whether weak performance is driven by frequent claims or expensive claims.</p>
+<p>The workflow then moves from portfolio-level analysis to segment-level analysis and advanced visual analytics. This structure supports a clear analytical logic: first identifying the overall profitability trend, then locating high-risk segments, and finally translating the findings into pricing, underwriting, and tail-risk monitoring implications.</p>
+</section>
 </section>
 <section id="portfolio-level-visual-analytics" class="level2">
 <h2 class="anchored" data-anchor-id="portfolio-level-visual-analytics">4. Portfolio-Level Visual Analytics</h2>
+<p>This section uses portfolio-level visual analytics to examine the overall profitability trend of the insurance portfolio. The analysis begins with yearly aggregation because the raw dataset is policy-level, while profitability deterioration is easier to observe at the portfolio-year level.</p>
+<p>The group_by() and summarise() functions in the dplyr package are used to aggregate total premium, total incurred claims, total claims, and exposure by year. The ggplot() function in the ggplot2 package is then used to create bar charts comparing yearly loss ratios and yearly premium-claim movements. The scales package is used to format loss ratios as percentages and monetary values as currency.</p>
+<section id="observations" class="level3 observation-box">
+<h3 class="anchored" data-anchor-id="observations">Observations</h3>
+<ol type="1">
+<li><p>The dataset is suitable for motor insurance portfolio analysis because it contains premium income, incurred claims, claim counts, exposure, policy characteristics, driver information, and vehicle information.</p></li>
+<li><p>Several insurance-specific analytical variables are created, including <code>profit</code>, <code>loss_ratio</code>, <code>claim_frequency</code>, and <code>claim_severity</code>. These variables transform the raw data into a more meaningful analytical sandbox for profitability and risk analysis.</p></li>
+<li><p>Driver age, vehicle age, and vehicle value are grouped into categorical segments to support clearer visual comparison across risk groups.</p></li>
+</ol>
+</section>
 <section id="overall-portfolio-profitability" class="level3">
 <h3 class="anchored" data-anchor-id="overall-portfolio-profitability">4.1 Overall Portfolio Profitability</h3>
 <div class="cell">
@@ -725,7 +765,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -774,7 +814,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -837,9 +877,20 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 </div>
 <p>The growth-rate comparison further confirms that incurred claims increased faster than premium income in 2024, which explains the deterioration in the yearly loss ratio.</p>
 </section>
+<section id="portfolio-level-insights" class="level3 insight-box">
+<h3 class="anchored" data-anchor-id="portfolio-level-insights">Portfolio-Level Insights</h3>
+<ul>
+<li><p>The portfolio remains profitable overall, but profitability weakened over time.</p></li>
+<li><p>The yearly loss ratio increased from 65.7% in 2022 to 66.5% in 2023, and then to 74.7% in 2024.</p></li>
+<li><p>Both premium income and incurred claims increased from 2022 to 2024, but incurred claims grew faster relative to premium income in 2024.</p></li>
+<li><p>Business growth does not necessarily improve profitability if claim costs grow faster than premium income.</p></li>
+</ul>
+</section>
 </section>
 <section id="claim-distribution-and-volatility" class="level2">
 <h2 class="anchored" data-anchor-id="claim-distribution-and-volatility">5. Claim Distribution and Volatility</h2>
+<p>This section examines the distribution of claim costs and loss ratios to understand portfolio volatility. Insurance claim data are usually highly skewed because most policies have no or small claims, while a small number of policies generate very large losses. Therefore, distributional visualisation is important before conducting segment-level analysis.</p>
+<p>The filter() function is used to focus on policies with positive incurred claims where appropriate. The geom_histogram() function is used to visualise claim cost and loss ratio distributions. For total incurred claims, scale_x_log10() is applied because the original claim amount distribution is highly right-skewed. A claim concentration curve is also created to assess whether a small share of high-loss policies accounts for a large share of total incurred claims.</p>
 <section id="distribution-of-total-incurred-claims" class="level3">
 <h3 class="anchored" data-anchor-id="distribution-of-total-incurred-claims">5.1 Distribution of Total Incurred Claims</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
@@ -850,7 +901,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -921,7 +972,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -965,7 +1016,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1051,7 +1102,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1105,7 +1156,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1157,9 +1208,20 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <p>This finding helps explain the earlier yearly loss ratio result. The portfolio loss ratio increased to 74.7% in 2024 because claim costs became heavier relative to premium income. From an insurance management perspective, this means that the insurer should monitor both claim occurrence and average claim size. If only loss ratio is analysed, the underlying source of deterioration may be unclear.</p>
 <p>The 2024 profitability deterioration is not only a premium issue; it is also related to higher claim frequency and a rebound in claim severity.</p>
 </section>
+<section id="claim-volatility-insights" class="level3 insight-box">
+<h3 class="anchored" data-anchor-id="claim-volatility-insights">Claim Volatility Insights</h3>
+<ul>
+<li><p>Claim costs are highly right-skewed, meaning that most policies generate small or no claims, while a small number of policies generate very large losses.</p></li>
+<li><p>The original loss ratio distribution is heavily concentrated at zero because many policies have no incurred claims. Separating claim occurrence from positive loss ratio distribution provides a clearer view of claim-generating policies.</p></li>
+<li><p>The claim concentration curve shows that portfolio volatility is strongly influenced by tail-risk observations.</p></li>
+<li><p>Frequency-severity decomposition shows that the 2024 deterioration is related to both higher claim frequency and a rebound in claim severity.</p></li>
+</ul>
+</section>
 </section>
 <section id="segment-level-profitability-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="segment-level-profitability-analysis">6. Segment-Level Profitability Analysis</h2>
+<p>This section applies bivariate visual analytics to compare profitability and claim risk across key policy, vehicle, and driver segments. The main objective is to identify whether high loss ratios are concentrated in specific groups.</p>
+<p>For each segment, the data are aggregated using group_by() and summarise(). Loss ratio, claim frequency, and claim severity are calculated at the segment level. Bar charts created using geom_col() are used to compare loss ratios across categories. In several charts, benchmark lines are added to represent either the 100% break-even loss ratio or the overall portfolio loss ratio. This makes it easier to identify segments with weaker-than-average profitability.</p>
 <section id="policy-type-and-profitability" class="level3">
 <h3 class="anchored" data-anchor-id="policy-type-and-profitability">6.1 Policy Type and Profitability</h3>
 <div class="cell">
@@ -1203,7 +1265,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1261,7 +1323,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1336,7 +1398,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1418,7 +1480,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1466,6 +1528,8 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 </section>
 <section id="fuel-type-and-claim-risk" class="level3">
 <h3 class="anchored" data-anchor-id="fuel-type-and-claim-risk">6.4 Fuel Type and Claim Risk</h3>
+<p>For fuel type, the analysis compares loss ratio, claim frequency, and claim severity within the same visualisation. The pivot_longer() function is used to transform the segment-level summary table into a long format, so that the three metrics can be displayed using facet_wrap(). This design allows the comparison of profitability, claim occurrence, and average claim size side by side.</p>
+<p>This approach is useful because a higher loss ratio can be caused by either higher claim frequency or higher claim severity. By showing all three metrics together, the chart helps identify whether fuel-type risk is frequency-driven or severity-driven.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>fuel_summary <span class="ot">&lt;-</span> motor_clean <span class="sc">%&gt;%</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(fuel_type) <span class="sc">%&gt;%</span></span>
@@ -1500,7 +1564,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1618,7 +1682,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-45-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1705,7 +1769,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-48-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-49-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1753,11 +1817,25 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <p>This result suggests that vehicle age is associated with profitability, but older vehicles are not necessarily the weakest-performing group in this portfolio. The higher loss ratio for vehicles aged 11–20 years may reflect higher claim frequency, maintenance-related risk, or different policyholder behaviour. The relatively high loss ratio for newer vehicles may be related to higher repair costs, higher vehicle values, or more expensive replacement parts.</p>
 <p>From an underwriting perspective, vehicle age should be analysed together with claim frequency and claim severity. If newer vehicles have higher loss ratios because of higher repair costs, the risk is severity-driven. If middle-aged vehicles have higher loss ratios because they claim more often, the risk is frequency-driven. Therefore, vehicle age is useful as a segmentation variable, but further frequency-severity analysis is needed before making pricing or underwriting decisions.</p>
 </section>
+<section id="segment-level-insights" class="level3 insight-box">
+<h3 class="anchored" data-anchor-id="segment-level-insights">Segment-Level Insights</h3>
+<ul>
+<li><p><code>COMP_N</code> is the most concerning policy type because it has both the highest loss ratio at 93.5% and the highest claim frequency at 1.04.</p></li>
+<li><p>Policy status <code>C</code> is a clear loss-making segment, with a loss ratio of 128.0%. This means claim costs exceed premium income for this group.</p></li>
+<li><p>Non-annual payment groups show weaker profitability. Annual payment policies have the lowest loss ratio at 67.9%, while quarterly and semi-annual payment policies have higher loss ratios of 76.4% and 80.7%.</p></li>
+<li><p>Diesel vehicles have weaker profitability mainly because of higher claim frequency. Claim severity is almost identical between diesel and gasoline vehicles, suggesting that fuel-type risk is frequency-driven rather than severity-driven.</p></li>
+<li><p>Driver age and vehicle age show non-linear profitability patterns. Therefore, they should be interpreted together with other risk indicators rather than in isolation.</p></li>
+</ul>
+</section>
 </section>
 <section id="advanced-visual-analytics" class="level2">
 <h2 class="anchored" data-anchor-id="advanced-visual-analytics">7. Advanced Visual Analytics</h2>
+<p>This section extends the analysis beyond one-variable bar charts by using advanced visual analytics techniques. The purpose is to identify high-risk segment combinations and to provide a more interactive view of portfolio performance.</p>
+<p>A heatmap is used to combine policy type and payment frequency in one visualisation. This helps identify whether high loss ratios are concentrated in specific product-payment combinations. A quadrant chart is then used to compare claim frequency and loss ratio at the same time, with bubble size representing premium volume. Finally, an interactive plotly chart is created to allow users to inspect detailed segment-level information through tooltips.</p>
 <section id="risk-heatmap-by-policy-type-and-payment-frequency" class="level3">
 <h3 class="anchored" data-anchor-id="risk-heatmap-by-policy-type-and-payment-frequency">7.1 Risk Heatmap by Policy Type and Payment Frequency</h3>
+<p>The risk heatmap is created by grouping the data by policy type and payment frequency. The geom_tile() function is used to display each segment as a cell, while fill colour represents the segment-level loss ratio. The geom_text() function is used to place the loss ratio value inside each cell.</p>
+<p>This visual design is useful because it allows two categorical variables to be examined simultaneously. It can reveal high-risk combinations that may be hidden when policy type and payment frequency are analysed separately.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>risk_heatmap <span class="ot">&lt;-</span> motor_clean <span class="sc">%&gt;%</span></span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(policy_type, payment_frequency) <span class="sc">%&gt;%</span></span>
@@ -1803,7 +1881,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-51-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-52-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1846,8 +1924,19 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <p>From an insurance management perspective, this heatmap helps prioritise underwriting and pricing review. Instead of treating all COMP_N policies as equally risky, the insurer can focus first on the COMP_N and semi-annual payment segment. This demonstrates the value of visual analytics: it helps identify more specific high-risk combinations that may be hidden in one-variable summaries.</p>
 <p>Overall, the heatmap reveals that profitability problems are not evenly distributed across the portfolio. The highest-risk segment is not simply COMP_N as a whole, but specifically COMP_N policies with semi-annual payment frequency.</p>
 </section>
+<section id="key-risk-segment" class="level3 warning-box">
+<h3 class="anchored" data-anchor-id="key-risk-segment">Key Risk Segment</h3>
+<ul>
+<li><p>The heatmap identifies <code>COMP_N + S</code> as the highest-risk segment.</p></li>
+<li><p><code>COMP_N + S</code> has a loss ratio of 108.8%, which is above the 100% break-even threshold.</p></li>
+<li><p>This means that claim costs exceed premium income for this specific product-payment combination.</p></li>
+<li><p>The result shows that the profitability problem is not only <code>COMP_N</code> as a broad policy type, but more specifically <code>COMP_N</code> with semi-annual payment frequency.</p></li>
+</ul>
+</section>
 <section id="premium-adequacy-quadrant" class="level3">
 <h3 class="anchored" data-anchor-id="premium-adequacy-quadrant">7.2 Premium Adequacy Quadrant</h3>
+<p>The premium adequacy quadrant is created to compare claim frequency and loss ratio at the same time. Each point represents one policy type. The x-axis shows claim frequency, the y-axis shows loss ratio, and bubble size represents premium volume.</p>
+<p>The horizontal dashed line represents the overall portfolio loss ratio, while the vertical dashed line represents the overall portfolio claim frequency. These reference lines divide the plot into different risk zones. Policy types in the upper-right area have both above-average claim frequency and above-average loss ratio, making them priority segments for pricing and underwriting review.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-16-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-1" role="tab" aria-controls="tabset-16-1" aria-selected="true" href="">The plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-16-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-2" role="tab" aria-controls="tabset-16-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
@@ -1856,7 +1945,7 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-53-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex01_files/figure-html/unnamed-chunk-54-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1917,14 +2006,16 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 </section>
 <section id="interactive-segment-level-visualisation" class="level3">
 <h3 class="anchored" data-anchor-id="interactive-segment-level-visualisation">7.3 Interactive Segment-Level Visualisation</h3>
+<p>The interactive visualisation is created using ggplotly() from the plotly package. The original ggplot object is converted into an interactive chart, allowing users to hover over each point and inspect detailed information such as loss ratio, claim frequency, claim severity, premium income, and profit.</p>
+<p>This is useful for exploratory visual analytics because insurance portfolio review often requires comparing multiple performance indicators at the same time. The interactive chart allows users to move from a broad visual pattern to detailed segment-level information.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-17-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-1" role="tab" aria-controls="tabset-17-1" aria-selected="true" href="">The plot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-2" role="tab" aria-controls="tabset-17-2" aria-selected="false" href="">The Code</a></li></ul>
 <div class="tab-content">
 <div id="tabset-17-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-17-1-tab">
 <div class="cell">
 <div class="cell-output-display">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-45406664fd22008bfe7b" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-45406664fd22008bfe7b">{"x":{"data":[{"x":[1.0432368290197165,0.40954996046099085,0.20717472006599652,0.22081766267348227,0.13350217892251501],"y":[0.93474107917131921,0.73944327795500264,0.69561569282419511,0.63452947667216786,0.54598143166807545],"text":["Policy Type: COMP_N <br>Loss Ratio: 93.5% <br>Claim Frequency: 1.043 <br>Claim Severity: $748.80 <br>Premium: $10,212,915 <br>Profit: $666,484","Policy Type: COMP_E <br>Loss Ratio: 73.9% <br>Claim Frequency: 0.41 <br>Claim Severity: $990.40 <br>Premium: $35,335,541 <br>Profit: $9,206,913","Policy Type: TPG <br>Loss Ratio: 69.6% <br>Claim Frequency: 0.207 <br>Claim Severity: $1,103.91 <br>Premium: $8,106,186 <br>Profit: $2,467,396","Policy Type: CC <br>Loss Ratio: 63.5% <br>Claim Frequency: 0.221 <br>Claim Severity: $992.00 <br>Premium: $49,715,151 <br>Profit: $18,169,422","Policy Type: TP <br>Loss Ratio: 54.6% <br>Claim Frequency: 0.134 <br>Claim Severity: $1,095.67 <br>Premium: $1,009,417 <br>Profit: $458,294"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(44,127,184,1)","opacity":0.75,"size":[11.994269795760291,19.644154255942624,10.993056700490754,22.677165354330711,3.7795275590551185],"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(44,127,184,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1.0432368290197165,0.40954996046099085,0.20717472006599652,0.22081766267348227,0.13350217892251501],"y":[0.93474107917131921,0.73944327795500264,0.69561569282419511,0.63452947667216786,0.54598143166807545],"text":["COMP_N","COMP_E","TPG","CC","TP"],"hovertext":["Policy Type: COMP_N <br>Loss Ratio: 93.5% <br>Claim Frequency: 1.043 <br>Claim Severity: $748.80 <br>Premium: $10,212,915 <br>Profit: $666,484","Policy Type: COMP_E <br>Loss Ratio: 73.9% <br>Claim Frequency: 0.41 <br>Claim Severity: $990.40 <br>Premium: $35,335,541 <br>Profit: $9,206,913","Policy Type: TPG <br>Loss Ratio: 69.6% <br>Claim Frequency: 0.207 <br>Claim Severity: $1,103.91 <br>Premium: $8,106,186 <br>Profit: $2,467,396","Policy Type: CC <br>Loss Ratio: 63.5% <br>Claim Frequency: 0.221 <br>Claim Severity: $992.00 <br>Premium: $49,715,151 <br>Profit: $18,169,422","Policy Type: TP <br>Loss Ratio: 54.6% <br>Claim Frequency: 0.134 <br>Claim Severity: $1,095.67 <br>Premium: $1,009,417 <br>Profit: $458,294"],"textfont":{"size":13.228346456692915,"color":"rgba(0,0,0,1)"},"type":"scatter","mode":"text","hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-0.059986117668633702,1.2597084710413076],"y":[0.70330769309343633,0.70330769309343633],"text":"","type":"scatter","mode":"lines","line":{"width":2.6456692913385824,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.30730979818891813,0.30730979818891813],"y":[0.47499999999999998,1.0249999999999999],"text":"","type":"scatter","mode":"lines","line":{"width":2.6456692913385824,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":40.840182648401829,"r":7.3059360730593621,"b":37.260273972602747,"l":48.949771689497723},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Interactive Segment Analysis by Policy Type","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.059986117668633702,1.2597084710413076],"tickmode":"array","ticktext":["0.00","0.25","0.50","0.75","1.00","1.25"],"tickvals":[0,0.25,0.5,0.75,0.99999999999999989,1.25],"categoryorder":"array","categoryarray":["0.00","0.25","0.50","0.75","1.00","1.25"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Claim Frequency","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.47499999999999998,1.0249999999999999],"tickmode":"array","ticktext":["50%","60%","70%","80%","90%","100%"],"tickvals":[0.5,0.59999999999999998,0.69999999999999996,0.80000000000000004,0.90000000000000002,1],"categoryorder":"array","categoryarray":["50%","60%","70%","80%","90%","100%"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Loss Ratio","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Premium","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"1993056953599":{"x":{},"y":{},"size":{},"text":{},"type":"scatter"},"19930fe34e74":{"x":{},"y":{},"size":{},"text":{},"label":{}},"19930502661cc":{"yintercept":{}},"199303bd8472a":{"xintercept":{}}},"cur_data":"1993056953599","visdat":{"1993056953599":["function (y) ","x"],"19930fe34e74":["function (y) ","x"],"19930502661cc":["function (y) ","x"],"199303bd8472a":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-9f6eb9f25ed3ce724a3a" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-9f6eb9f25ed3ce724a3a">{"x":{"data":[{"x":[1.0432368290197165,0.40954996046099085,0.20717472006599652,0.22081766267348227,0.13350217892251501],"y":[0.93474107917131921,0.73944327795500264,0.69561569282419511,0.63452947667216786,0.54598143166807545],"text":["Policy Type: COMP_N <br>Loss Ratio: 93.5% <br>Claim Frequency: 1.043 <br>Claim Severity: $748.80 <br>Premium: $10,212,915 <br>Profit: $666,484","Policy Type: COMP_E <br>Loss Ratio: 73.9% <br>Claim Frequency: 0.41 <br>Claim Severity: $990.40 <br>Premium: $35,335,541 <br>Profit: $9,206,913","Policy Type: TPG <br>Loss Ratio: 69.6% <br>Claim Frequency: 0.207 <br>Claim Severity: $1,103.91 <br>Premium: $8,106,186 <br>Profit: $2,467,396","Policy Type: CC <br>Loss Ratio: 63.5% <br>Claim Frequency: 0.221 <br>Claim Severity: $992.00 <br>Premium: $49,715,151 <br>Profit: $18,169,422","Policy Type: TP <br>Loss Ratio: 54.6% <br>Claim Frequency: 0.134 <br>Claim Severity: $1,095.67 <br>Premium: $1,009,417 <br>Profit: $458,294"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(44,127,184,1)","opacity":0.75,"size":[11.994269795760291,19.644154255942624,10.993056700490754,22.677165354330711,3.7795275590551185],"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(44,127,184,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1.0432368290197165,0.40954996046099085,0.20717472006599652,0.22081766267348227,0.13350217892251501],"y":[0.93474107917131921,0.73944327795500264,0.69561569282419511,0.63452947667216786,0.54598143166807545],"text":["COMP_N","COMP_E","TPG","CC","TP"],"hovertext":["Policy Type: COMP_N <br>Loss Ratio: 93.5% <br>Claim Frequency: 1.043 <br>Claim Severity: $748.80 <br>Premium: $10,212,915 <br>Profit: $666,484","Policy Type: COMP_E <br>Loss Ratio: 73.9% <br>Claim Frequency: 0.41 <br>Claim Severity: $990.40 <br>Premium: $35,335,541 <br>Profit: $9,206,913","Policy Type: TPG <br>Loss Ratio: 69.6% <br>Claim Frequency: 0.207 <br>Claim Severity: $1,103.91 <br>Premium: $8,106,186 <br>Profit: $2,467,396","Policy Type: CC <br>Loss Ratio: 63.5% <br>Claim Frequency: 0.221 <br>Claim Severity: $992.00 <br>Premium: $49,715,151 <br>Profit: $18,169,422","Policy Type: TP <br>Loss Ratio: 54.6% <br>Claim Frequency: 0.134 <br>Claim Severity: $1,095.67 <br>Premium: $1,009,417 <br>Profit: $458,294"],"textfont":{"size":13.228346456692915,"color":"rgba(0,0,0,1)"},"type":"scatter","mode":"text","hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-0.059986117668633702,1.2597084710413076],"y":[0.70330769309343633,0.70330769309343633],"text":"","type":"scatter","mode":"lines","line":{"width":2.6456692913385824,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.30730979818891813,0.30730979818891813],"y":[0.47499999999999998,1.0249999999999999],"text":"","type":"scatter","mode":"lines","line":{"width":2.6456692913385824,"color":"rgba(0,0,0,1)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":40.840182648401829,"r":7.3059360730593621,"b":37.260273972602747,"l":48.949771689497723},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Interactive Segment Analysis by Policy Type","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.059986117668633702,1.2597084710413076],"tickmode":"array","ticktext":["0.00","0.25","0.50","0.75","1.00","1.25"],"tickvals":[0,0.25,0.5,0.75,0.99999999999999989,1.25],"categoryorder":"array","categoryarray":["0.00","0.25","0.50","0.75","1.00","1.25"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Claim Frequency","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.47499999999999998,1.0249999999999999],"tickmode":"array","ticktext":["50%","60%","70%","80%","90%","100%"],"tickvals":[0.5,0.59999999999999998,0.69999999999999996,0.80000000000000004,0.90000000000000002,1],"categoryorder":"array","categoryarray":["50%","60%","70%","80%","90%","100%"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Loss Ratio","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Premium","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"1a618d5e7c9e":{"x":{},"y":{},"size":{},"text":{},"type":"scatter"},"1a61810444656":{"x":{},"y":{},"size":{},"text":{},"label":{}},"1a61851806693":{"yintercept":{}},"1a61879837fc":{"xintercept":{}}},"cur_data":"1a618d5e7c9e","visdat":{"1a618d5e7c9e":["function (y) ","x"],"1a61810444656":["function (y) ","x"],"1a61851806693":["function (y) ","x"],"1a61879837fc":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </div>
@@ -1992,6 +2083,15 @@ $ liability_exposure          &lt;dbl&gt; 0.09863014, 1.00000000, 1.00000000, 1.
 <p>This interactive design is useful because insurance portfolio review often requires comparing multiple indicators at the same time. A static chart can show the overall pattern, but an interactive chart allows decision-makers to examine the details of each segment more efficiently. For example, COMP_E has a loss ratio of 73.9%, claim frequency of 0.41, claim severity of about $990, premium income of about $35.3 million, and profit of about $9.2 million. This helps show that although COMP_E has weaker-than-average profitability, it still contributes positive underwriting profit.</p>
 <p>From a visual analytics perspective, the interactive chart supports deeper exploration beyond dashboard reporting. It allows the analyst to move from a broad pattern to specific segment details. This is especially useful for identifying policy types that combine high premium volume, high claim frequency, and weak profitability. These segments should be prioritised for pricing review, underwriting refinement, or further claim driver investigation.</p>
 <p>Overall, the interactive chart confirms that COMP_N is the most concerning policy type because it is located in the high-frequency and high-loss-ratio area. It also shows that some policy types with weaker profitability still generate positive profit because of their premium volume. Therefore, interactive visual analytics helps balance risk, profitability, and business scale in portfolio review.</p>
+</section>
+<section id="advanced-visual-analytics-insights" class="level3 insight-box">
+<h3 class="anchored" data-anchor-id="advanced-visual-analytics-insights">Advanced Visual Analytics Insights</h3>
+<ul>
+<li><p>The risk heatmap reveals that profitability problems are concentrated in specific product-payment combinations.</p></li>
+<li><p>The premium adequacy quadrant confirms that <code>COMP_N</code> is located in the high-frequency and high-loss-ratio area.</p></li>
+<li><p>The interactive visualisation allows users to inspect loss ratio, claim frequency, claim severity, premium volume, and profit at the same time.</p></li>
+<li><p>Together, these advanced visualisations move the analysis beyond simple dashboard reporting and provide more actionable support for pricing and underwriting review.</p></li>
+</ul>
 </section>
 </section>
 <section id="statistical-validation" class="level2">

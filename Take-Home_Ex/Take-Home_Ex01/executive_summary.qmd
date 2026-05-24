@@ -1,0 +1,591 @@
+---
+title: "Executive Summary"
+subtitle: "Visual Analytics of Motor Insurance Portfolio"
+author: "JUNCHEN LI"
+date: "May 24, 2026"
+date-modified: "last-modified"
+format:
+  revealjs:
+    theme: dark
+    slide-number: true
+    transition: fade
+    width: 1600
+    height: 900
+    code-fold: true
+editor: visual
+execute:
+  eval: true
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
+---
+
+```{r}
+pacman::p_load(
+  tidyverse,
+  janitor,
+  scales,
+  ggthemes,
+  plotly,
+  broom
+)
+
+theme_set(theme_minimal())
+```
+
+```{r}
+motor_raw <- read_delim(
+  "data/Dataset of motor insurance portfolio.csv",
+  delim = ";",
+  show_col_types = FALSE
+)
+
+motor <- motor_raw %>%
+  clean_names()
+
+motor_clean <- motor %>%
+  drop_na(
+    fuel_type,
+    vehicle_value,
+    vehicle_age,
+    age_driving_licence
+  ) %>%
+  mutate(
+    claim_indicator = if_else(total_claims > 0, 1, 0),
+    profit = total_premium - total_incurred,
+    loss_ratio = if_else(total_premium > 0, total_incurred / total_premium, NA_real_),
+    claim_frequency = if_else(total_exposure > 0, total_claims / total_exposure, NA_real_),
+    claim_severity = if_else(total_claims > 0, total_incurred / total_claims, NA_real_),
+    driver_age_group = cut(
+      driver_age,
+      breaks = c(17, 25, 35, 45, 55, 65, Inf),
+      labels = c("18-25", "26-35", "36-45", "46-55", "56-65", "66+"),
+      right = TRUE
+    ),
+    vehicle_age_group = cut(
+      vehicle_age,
+      breaks = c(-1, 5, 10, 20, 30, Inf),
+      labels = c("0-5", "6-10", "11-20", "21-30", "31+"),
+      right = TRUE
+    )
+  )
+```
+
+```{r}
+portfolio_summary <- motor_clean %>%
+  summarise(
+    number_of_records = n(),
+    unique_insured = n_distinct(insured_id),
+    total_premium = sum(total_premium, na.rm = TRUE),
+    total_incurred = sum(total_incurred, na.rm = TRUE),
+    total_claims = sum(total_claims, na.rm = TRUE),
+    total_exposure = sum(total_exposure, na.rm = TRUE),
+    overall_profit = total_premium - total_incurred,
+    overall_loss_ratio = total_incurred / total_premium,
+    overall_claim_frequency = total_claims / total_exposure,
+    overall_claim_severity = total_incurred / total_claims
+  )
+
+year_summary <- motor_clean %>%
+  group_by(year) %>%
+  summarise(
+    premium = sum(total_premium, na.rm = TRUE),
+    incurred = sum(total_incurred, na.rm = TRUE),
+    claims = sum(total_claims, na.rm = TRUE),
+    exposure = sum(total_exposure, na.rm = TRUE),
+    profit = premium - incurred,
+    loss_ratio = incurred / premium,
+    claim_frequency = claims / exposure,
+    claim_severity = incurred / claims,
+    .groups = "drop"
+  )
+
+policy_type_summary <- motor_clean %>%
+  group_by(policy_type) %>%
+  summarise(
+    n = n(),
+    premium = sum(total_premium, na.rm = TRUE),
+    incurred = sum(total_incurred, na.rm = TRUE),
+    claims = sum(total_claims, na.rm = TRUE),
+    exposure = sum(total_exposure, na.rm = TRUE),
+    profit = premium - incurred,
+    loss_ratio = incurred / premium,
+    claim_frequency = claims / exposure,
+    claim_severity = incurred / claims,
+    .groups = "drop"
+  ) %>%
+  arrange(desc(loss_ratio))
+
+policy_status_summary <- motor_clean %>%
+  group_by(policy_status) %>%
+  summarise(
+    n = n(),
+    premium = sum(total_premium, na.rm = TRUE),
+    incurred = sum(total_incurred, na.rm = TRUE),
+    profit = premium - incurred,
+    loss_ratio = incurred / premium,
+    .groups = "drop"
+  )
+
+payment_summary <- motor_clean %>%
+  group_by(payment_frequency) %>%
+  summarise(
+    n = n(),
+    premium = sum(total_premium, na.rm = TRUE),
+    incurred = sum(total_incurred, na.rm = TRUE),
+    claims = sum(total_claims, na.rm = TRUE),
+    exposure = sum(total_exposure, na.rm = TRUE),
+    profit = premium - incurred,
+    loss_ratio = incurred / premium,
+    claim_frequency = claims / exposure,
+    claim_severity = incurred / claims,
+    .groups = "drop"
+  )
+
+fuel_summary <- motor_clean %>%
+  group_by(fuel_type) %>%
+  summarise(
+    n = n(),
+    premium = sum(total_premium, na.rm = TRUE),
+    incurred = sum(total_incurred, na.rm = TRUE),
+    claims = sum(total_claims, na.rm = TRUE),
+    exposure = sum(total_exposure, na.rm = TRUE),
+    profit = premium - incurred,
+    loss_ratio = incurred / premium,
+    claim_frequency = claims / exposure,
+    claim_severity = incurred / claims,
+    .groups = "drop"
+  )
+
+risk_heatmap <- motor_clean %>%
+  group_by(policy_type, payment_frequency) %>%
+  summarise(
+    n = n(),
+    premium = sum(total_premium, na.rm = TRUE),
+    incurred = sum(total_incurred, na.rm = TRUE),
+    claims = sum(total_claims, na.rm = TRUE),
+    exposure = sum(total_exposure, na.rm = TRUE),
+    profit = premium - incurred,
+    loss_ratio = incurred / premium,
+    claim_frequency = claims / exposure,
+    .groups = "drop"
+  )
+```
+
+***Executive Summary***
+
+**Motor Insurance Portfolio Visual Analytics**
+
+Profitability, claim volatility, and high-risk segments
+
+**Main Objective**
+
+-   Identify whether weak profitability is driven by claim frequency, claim severity, or pricing inadequacy.
+-   Locate high-risk policy and vehicle segments.
+-   Translate visual analytics findings into pricing and underwriting implications.
+
+## Insight 1
+***Insight 1 - Portfolio Profitability Deteriorated in 2024***
+
+```{r}
+ggplot(year_summary, aes(x = factor(year), y = loss_ratio)) +
+  geom_col(fill = "#2C7FB8") +
+  geom_hline(
+    yintercept = 1,
+    linetype = "dashed",
+    linewidth = 0.8,
+    color = "white"
+  ) +
+  geom_text(
+    aes(label = percent(loss_ratio, accuracy = 0.1)),
+    vjust = -0.3,
+    size = 5,
+    color = "white"
+  ) +
+  scale_y_continuous(
+    labels = percent,
+    limits = c(0, 1.1)
+  ) +
+  labs(
+    title = "Portfolio Loss Ratio by Year",
+    subtitle = "The dashed line represents the 100% break-even loss ratio",
+    x = "Year",
+    y = "Loss Ratio"
+  ) +
+  theme_minimal(base_size = 18)
+```
+
+-   Loss ratio increased from 65.7% in 2022 to 74.7% in 2024.
+-   The portfolio remains profitable, but the underwriting margin became thinner.
+-   The 2024 deterioration motivates deeper frequency-severity and segment-level analysis.
+
+## Insight 2
+***Insight 2 - Premium Growth Did Not Fully Offset Claim Growth***
+```{r}
+year_long <- year_summary %>%
+  select(year, premium, incurred) %>%
+  pivot_longer(
+    cols = c(premium, incurred),
+    names_to = "metric",
+    values_to = "amount"
+  ) %>%
+  mutate(
+    metric = recode(
+      metric,
+      "premium" = "Premium Income",
+      "incurred" = "Incurred Claims"
+    )
+  )
+
+ggplot(year_long, aes(x = factor(year), y = amount, fill = metric)) +
+  geom_col(position = "dodge") +
+  scale_y_continuous(labels = dollar) +
+  scale_fill_manual(
+    values = c(
+      "Premium Income" = "#4DBBD5",
+      "Incurred Claims" = "#E64B35"
+    )
+  ) +
+  labs(
+    title = "Premium Income and Incurred Claims by Year",
+    subtitle = "Claim costs increased substantially in 2024",
+    x = "Year",
+    y = "Amount",
+    fill = "Metric"
+  ) +
+  theme_minimal(base_size = 18)
+```
+
+-   Both premium income and incurred claims increased from 2022 to 2024.
+-   Incurred claims grew faster relative to premium income in 2024.
+-   Business growth does not necessarily improve profitability if claim costs grow faster.
+
+## Insight 3
+***Insight 3 - Claim Risk is Concentrated in Large-Loss Policies***
+```{r}
+claim_concentration <- motor_clean %>%
+  filter(total_incurred > 0) %>%
+  arrange(desc(total_incurred)) %>%
+  mutate(
+    claim_rank = row_number(),
+    claim_percentile = claim_rank / n(),
+    cumulative_incurred = cumsum(total_incurred),
+    cumulative_share = cumulative_incurred / sum(total_incurred)
+  )
+
+top10_share <- claim_concentration %>%
+  filter(claim_percentile <= 0.10) %>%
+  summarise(share = max(cumulative_share)) %>%
+  pull(share)
+
+ggplot(claim_concentration,
+       aes(x = claim_percentile, y = cumulative_share)) +
+  geom_line(color = "#4DBBD5", linewidth = 1.2) +
+  geom_vline(xintercept = 0.10, linetype = "dashed", color = "white") +
+  geom_hline(yintercept = top10_share, linetype = "dashed", color = "white") +
+  annotate(
+    "text",
+    x = 0.36,
+    y = top10_share + 0.06,
+    label = paste0(
+      "Top 10% of claim policies account for ",
+      percent(top10_share, accuracy = 0.1),
+      " of incurred claims"
+    ),
+    size = 5,
+    color = "white"
+  ) +
+  scale_x_continuous(labels = percent) +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "Claim Concentration Curve",
+    subtitle = "A small share of high-loss policies contributes a large share of total incurred claims",
+    x = "Share of Claim Policies, Ordered by Claim Size",
+    y = "Cumulative Share of Total Incurred Claims"
+  ) +
+  theme_minimal(base_size = 18)
+```
+
+-   Claim costs are highly concentrated among high-loss policies.
+-   Portfolio volatility is strongly influenced by tail-risk observations.
+-   Large-loss policies should be monitored separately from average claim behavior.
+
+## Insight 4a
+***Insight 4 - COMP_N is the Highest-Risk Policy Type***
+
+```{r}
+ggplot(policy_type_summary,
+       aes(
+         x = reorder(policy_type, loss_ratio),
+         y = loss_ratio,
+         fill = policy_type == "COMP_N"
+       )) +
+  geom_col() +
+  geom_hline(
+    yintercept = 1,
+    linetype = "dashed",
+    linewidth = 0.8,
+    color = "white"
+  ) +
+  geom_text(
+    aes(label = percent(loss_ratio, accuracy = 0.1)),
+    hjust = -0.1,
+    size = 4.5,
+    color = "white"
+  ) +
+  coord_flip() +
+  scale_fill_manual(
+    values = c("TRUE" = "#E64B35", "FALSE" = "#4DBBD5"),
+    guide = "none"
+  ) +
+  scale_y_continuous(
+    labels = percent,
+    limits = c(0, 1.1)
+  ) +
+  labs(
+    title = "Loss Ratio",
+    x = "Policy Type",
+    y = NULL
+  ) +
+  theme_minimal(base_size = 16)
+```
+
+## Insight 4b
+```{r}
+ggplot(policy_type_summary,
+       aes(
+         x = reorder(policy_type, claim_frequency),
+         y = claim_frequency,
+         fill = policy_type == "COMP_N"
+       )) +
+  geom_col() +
+  geom_text(
+    aes(label = round(claim_frequency, 2)),
+    hjust = -0.1,
+    size = 4.5,
+    color = "white"
+  ) +
+  coord_flip() +
+  scale_fill_manual(
+    values = c("TRUE" = "#E64B35", "FALSE" = "#4DBBD5"),
+    guide = "none"
+  ) +
+  scale_y_continuous(
+    limits = c(0, max(policy_type_summary$claim_frequency) * 1.15)
+  ) +
+  labs(
+    title = "Claim Frequency",
+    x = "Policy Type",
+    y = NULL
+  ) +
+  theme_minimal(base_size = 16)
+```
+
+-   COMP_N has the highest loss ratio at 93.5%.
+-   It also has the highest claim frequency at 1.04.
+-   This suggests that COMP_N is a frequency-driven high-risk segment.
+
+## Insight 5
+***Insight 5 - Policy Status C is Loss-Making***
+```{r}
+ggplot(policy_status_summary,
+       aes(
+         x = policy_status,
+         y = loss_ratio,
+         fill = loss_ratio > 1
+       )) +
+  geom_col(width = 0.65) +
+  geom_hline(
+    yintercept = 1,
+    linetype = "dashed",
+    linewidth = 0.8,
+    color = "white"
+  ) +
+  geom_text(
+    aes(label = percent(loss_ratio, accuracy = 0.1)),
+    vjust = -0.3,
+    size = 5,
+    color = "white"
+  ) +
+  scale_fill_manual(
+    values = c("TRUE" = "#E64B35", "FALSE" = "#4DBBD5"),
+    guide = "none"
+  ) +
+  scale_y_continuous(
+    labels = percent,
+    limits = c(0, max(policy_status_summary$loss_ratio) * 1.15)
+  ) +
+  labs(
+    title = "Loss Ratio by Policy Status",
+    subtitle = "The dashed line represents the 100% break-even loss ratio",
+    x = "Policy Status",
+    y = "Loss Ratio"
+  ) +
+  theme_minimal(base_size = 18)
+```
+
+-   Policy status C has a loss ratio of 128.0%.
+-   This segment is loss-making because claim costs exceed premium income.
+-   Policy closure or cancellation may be associated with adverse claim experience.
+
+## Insight 6
+***Insight 6 - Diesel Vehicles are Frequency-Driven Risk***
+```{r}
+fuel_long <- fuel_summary %>%
+  select(fuel_type, loss_ratio, claim_frequency, claim_severity) %>%
+  pivot_longer(
+    cols = c(loss_ratio, claim_frequency, claim_severity),
+    names_to = "metric",
+    values_to = "value"
+  ) %>%
+  mutate(
+    metric = recode(
+      metric,
+      "claim_frequency" = "Claim Frequency",
+      "claim_severity" = "Claim Severity",
+      "loss_ratio" = "Loss Ratio"
+    ),
+    label = case_when(
+      metric == "Claim Frequency" ~ as.character(round(value, 3)),
+      metric == "Claim Severity" ~ dollar(value, accuracy = 1),
+      metric == "Loss Ratio" ~ percent(value, accuracy = 0.1)
+    )
+  )
+
+ggplot(fuel_long, aes(x = fuel_type, y = value, fill = fuel_type)) +
+  geom_col(width = 0.7) +
+  geom_text(
+    aes(label = label),
+    vjust = -0.35,
+    size = 4.2,
+    color = "white"
+  ) +
+  facet_wrap(~ metric, scales = "free_y") +
+  scale_fill_manual(
+    values = c(
+      "D" = "#E64B35",
+      "G" = "#4DBBD5"
+    )
+  ) +
+  labs(
+    title = "Fuel Type and Claim Risk",
+    subtitle = "Diesel vehicles show weaker profitability mainly because of higher claim frequency",
+    x = "Fuel Type",
+    y = NULL
+  ) +
+  theme_minimal(base_size = 17) +
+  theme(
+    legend.position = "none",
+    strip.text = element_text(face = "bold"),
+    plot.title = element_text(face = "bold")
+  )
+```
+
+-   Diesel vehicles have higher claim frequency than gasoline vehicles.
+-   Claim severity is almost identical between the two groups.
+-   The fuel-type difference is mainly frequency-driven rather than severity-driven.
+
+## Insight 7
+***Insight 7 - High Risk is Concentrated in COMP_N + Semi-Annual Payment***
+```{r}
+ggplot(risk_heatmap,
+       aes(x = payment_frequency, y = policy_type, fill = loss_ratio)) +
+  geom_tile(color = "white") +
+  geom_text(
+    aes(label = percent(loss_ratio, accuracy = 0.1)),
+    size = 5,
+    color = "white"
+  ) +
+  scale_fill_gradient(
+    low = "#FEE5D9",
+    high = "#CB181D",
+    labels = percent,
+    name = "Loss Ratio"
+  ) +
+  labs(
+    title = "Risk Heatmap by Policy Type and Payment Frequency",
+    subtitle = "COMP_N with semi-annual payment is loss-making",
+    x = "Payment Frequency",
+    y = "Policy Type"
+  ) +
+  theme_minimal(base_size = 18)
+```
+
+-   COMP_N + S has a loss ratio of 108.8%.
+-   This specific product-payment combination is loss-making.
+-   Segment-level visual analytics reveals risks hidden in one-variable summaries.
+
+## Insight 8
+***Insight 8 - Premium Adequacy Quadrant Confirms COMP_N Risk***
+```{r}
+ggplot(policy_type_summary,
+       aes(
+         x = claim_frequency,
+         y = loss_ratio,
+         size = premium,
+         label = policy_type
+       )) +
+  geom_point(
+    alpha = 0.8,
+    color = "#4DBBD5"
+  ) +
+  geom_text(
+    vjust = -1,
+    size = 5,
+    color = "white"
+  ) +
+  geom_hline(
+    yintercept = portfolio_summary$overall_loss_ratio,
+    linetype = "dashed",
+    linewidth = 0.8,
+    color = "white"
+  ) +
+  geom_vline(
+    xintercept = portfolio_summary$overall_claim_frequency,
+    linetype = "dashed",
+    linewidth = 0.8,
+    color = "white"
+  ) +
+  scale_y_continuous(
+    labels = percent,
+    limits = c(0.50, 1.05)
+  ) +
+  scale_x_continuous(
+    limits = c(0, max(policy_type_summary$claim_frequency) * 1.15)
+  ) +
+  scale_size_continuous(labels = dollar) +
+  labs(
+    title = "Premium Adequacy Quadrant by Policy Type",
+    subtitle = "Loss ratio versus claim frequency, with bubble size representing premium volume",
+    x = "Claim Frequency",
+    y = "Loss Ratio",
+    size = "Premium"
+  ) +
+  theme_minimal(base_size = 18)
+```
+
+-   COMP_N is located in the high-frequency and high-loss-ratio area.
+-   COMP_E is also above the portfolio average on both dimensions.
+-   CC and TP appear to be stronger-performing segments.
+
+## Recommendations
+***Recommendations***
+**Pricing and Underwriting Priorities**
+
+-   Review pricing and underwriting rules for COMP_N.
+-   Prioritise investigation of COMP_N + S, since it is loss-making.
+-   Monitor policy status C, which has a loss ratio above 100%.
+-   Treat diesel vehicles as a frequency-driven risk segment.
+-   Add tail-risk monitoring for large-loss policies.
+-   Monitor yearly loss ratio movement to detect pricing inadequacy earlier.
+
+## Final Takeaway
+***Final Takeaway***
+**Visual analytics identifies where profitability problems are concentrated**
+
+-   The portfolio remains profitable overall.
+-   Profitability deteriorated in 2024.
+-   Claim risk is concentrated in specific segments.
+-   COMP_N, policy status C, and COMP_N + S are the most important risk signals.
+-   Visual analytics supports more targeted pricing, underwriting, and portfolio monitoring.
