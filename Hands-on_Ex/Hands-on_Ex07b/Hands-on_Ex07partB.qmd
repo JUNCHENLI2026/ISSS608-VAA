@@ -1,0 +1,692 @@
+---
+title: "Hands-on_Ex07b"
+author: "JUNCHEN LI"
+date: "June 4,2026"
+date-modified: "last-modified"
+format: html
+editor: visual
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: True
+---
+
+## 1 Getting Started
+
+### 1.1 Installing and launching R packages
+
+```{r}
+pacman::p_load(tidytext, widyr, wordcloud, DT, ggwordcloud, textplot, lubridate, hms,
+tidyverse, tidygraph, ggraph, igraph)
+```
+
+## 2 Importing Multiple Text Files from Multiple Folders
+
+### 2.1 Creating a folder list
+
+```{r}
+news20 <- "data/20news/"
+```
+
+### 2.2 Define a function to read all files from a folder into a data frame
+
+```{r}
+read_folder <- function(infolder) {
+  tibble(file = dir(infolder, 
+                    full.names = TRUE)) %>%
+    mutate(text = map(file, 
+                      read_lines)) %>%
+    transmute(id = basename(file), 
+              text) %>%
+    unnest(text)
+}
+```
+
+## 3 Importing Multiple Text Files from Multiple Folders
+
+### 3.1 Reading in all the messages from the 20news folder
+
+```{r}
+raw_text <- tibble(folder = 
+                     dir(news20, 
+                         full.names = TRUE)) %>%
+  mutate(folder_out = map(folder, 
+                          read_folder)) %>%
+  unnest(cols = c(folder_out)) %>%
+  transmute(newsgroup = basename(folder), 
+            id, text)
+dir.create(
+  "data/rds",
+  recursive = TRUE,
+  showWarnings = FALSE
+)
+write_rds(raw_text, "data/rds/news20.rds")
+```
+
+## 4 Initial EDA
+
+::: panel-tabset
+#### The plot
+
+```{r, echo=FALSE}
+raw_text <- read_rds("data/rds/news20.rds")
+
+raw_text %>%
+  group_by(newsgroup) %>%
+  summarise(
+    messages = n_distinct(id)
+  ) %>%
+  ggplot(
+    aes(
+      x = messages,
+      y = newsgroup
+    )
+  ) +
+  geom_col(fill = "lightblue") +
+  labs(
+    x = "Number of messages",
+    y = NULL,
+    title = "Number of Messages by Newsgroup"
+  )
+```
+
+#### The Code
+
+```{r, eval=FALSE}
+raw_text <- read_rds("data/rds/news20.rds")
+
+raw_text %>%
+  group_by(newsgroup) %>%
+  summarise(
+    messages = n_distinct(id)
+  ) %>%
+  ggplot(
+    aes(
+      x = messages,
+      y = newsgroup
+    )
+  ) +
+  geom_col(fill = "lightblue") +
+  labs(
+    x = "Number of messages",
+    y = NULL,
+    title = "Number of Messages by Newsgroup"
+  )
+```
+:::
+
+## 5 Introducing tidytext
+
+### 5.1 Removing header and automated email signitures
+
+```{r}
+cleaned_text <- raw_text %>%
+  group_by(newsgroup, id) %>%
+  filter(cumsum(text == "") > 0,
+         cumsum(str_detect(
+           text, "^--")) == 0) %>%
+  ungroup()
+```
+
+### 5.2 Removing lines with nested text representing quotes from other users.
+
+```{r}
+cleaned_text <- cleaned_text %>%
+  filter(str_detect(text, "^[^>]+[A-Za-z\\d]")
+         | text == "",
+         !str_detect(text, 
+                     "writes(:|\\.\\.\\.)$"),
+         !str_detect(text, 
+                     "^In article <")
+  )
+```
+
+### 5.3 Text Data Processing
+
+```{r}
+usenet_words <- cleaned_text %>%
+  unnest_tokens(word, text) %>%
+  filter(str_detect(word, "[a-z']$"),
+         !word %in% stop_words$word)
+```
+
+```{r}
+usenet_words %>%
+  count(word, sort = TRUE)
+```
+
+```{r}
+words_by_newsgroup <- usenet_words %>%
+  count(newsgroup, word, sort = TRUE) %>%
+  ungroup()
+```
+
+### 5.4 Visualising Words in newsgroups
+
+```{r}
+wordcloud(words_by_newsgroup$word,
+          words_by_newsgroup$n,
+          max.words = 300)
+```
+
+A DT table can be used to complement the visual discovery.
+
+```{r}
+DT::datatable(
+  words_by_newsgroup,
+  filter = "top",
+  rownames = FALSE,
+  colnames = c(
+    "Newsgroup",
+    "Word",
+    "Frequency"
+  ),
+  options = list(
+    pageLength = 10,
+    lengthMenu = c(10, 25, 50, 100),
+    autoWidth = TRUE
+  )
+)
+```
+
+### 5.5 Visualising Words in newsgroups
+
+```{r}
+set.seed(1234)
+
+words_by_newsgroup %>%
+  group_by(newsgroup) %>%
+  slice_max(
+    order_by = n,
+    n = 30,
+    with_ties = FALSE
+  ) %>%
+  ungroup() %>%
+  ggplot(
+    aes(
+      label = word,
+      size = n
+    )
+  ) +
+  geom_text_wordcloud() +
+  scale_size_area(max_size = 12) +
+  facet_wrap(~newsgroup) +
+  theme_minimal()
+```
+
+## 6 Basic Concept of TF-IDF
+
+### 6.1 Computing tf-idf within newsgroups
+
+```{r}
+tf_idf <- words_by_newsgroup %>%
+  bind_tf_idf(word, newsgroup, n) %>%
+  arrange(desc(tf_idf))
+```
+
+### 6.2 Visualising tf-idf as interactive table
+
+```{r}
+DT::datatable(tf_idf, filter = 'top') %>% 
+  formatRound(columns = c('tf', 'idf', 
+                          'tf_idf'), 
+              digits = 3) %>%
+  formatStyle(0, 
+              target = 'row', 
+              lineHeight='25%')
+```
+
+### 6.3 Visualising tf-idf within newsgroups
+
+```{r}
+tf_idf %>%
+  filter(str_detect(newsgroup, "^sci\\.")) %>%
+  group_by(newsgroup) %>%
+  slice_max(tf_idf, 
+            n = 12) %>%
+  ungroup() %>%
+  mutate(word = reorder(word, 
+                        tf_idf)) %>%
+  ggplot(aes(tf_idf, 
+             word, 
+             fill = newsgroup)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ newsgroup, 
+             scales = "free") +
+  labs(x = "tf-idf", 
+       y = NULL)
+```
+
+### 6.4 Counting and correlating pairs of words with the widyr package
+
+```{r}
+newsgroup_cors <- words_by_newsgroup %>%
+  pairwise_cor(newsgroup, 
+               word, 
+               n, 
+               sort = TRUE)
+```
+
+### 6.5 Visualising correlation as a network
+
+```{r}
+set.seed(2017)
+
+newsgroup_cors %>%
+  filter(correlation > .025) %>%
+  graph_from_data_frame() %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(alpha = correlation, 
+                     width = correlation)) +
+  geom_node_point(size = 6, 
+                  color = "lightblue") +
+  geom_node_text(aes(label = name),
+                 color = "red",
+                 repel = TRUE) +
+  theme_void()
+```
+
+### 6.6 Bigram
+
+```{r}
+bigrams <- cleaned_text %>%
+  unnest_tokens(bigram, 
+                text, 
+                token = "ngrams", 
+                n = 2)
+```
+
+```{r}
+bigrams
+```
+
+### 6.7 Counting bigrams
+
+```{r}
+bigrams_count <- bigrams %>%
+  filter(bigram != 'NA') %>%
+  count(bigram, sort = TRUE)
+```
+
+```{r}
+bigrams_count
+```
+
+### 6.8 Cleaning bigram
+
+```{r}
+bigrams_separated <- bigrams %>%
+  filter(bigram != 'NA') %>%
+  separate(bigram, c("word1", "word2"), 
+           sep = " ")
+
+bigrams_filtered <- bigrams_separated %>%
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word)
+```
+
+```{r}
+bigrams_filtered
+```
+
+### 6.9 Counting the bigram again
+
+```{r}
+bigram_counts <- bigrams_filtered %>% 
+  count(word1, word2, sort = TRUE)
+```
+
+### 6.10 Create a network graph from bigram data frame
+
+```{r}
+bigram_graph <- bigram_counts %>%
+  filter(n > 3) %>%
+  graph_from_data_frame()
+bigram_graph
+```
+
+### 6.11 Visualizing a network of bigrams with ggraph
+
+```{r}
+set.seed(1234)
+
+ggraph(bigram_graph, layout = "fr") +
+  geom_edge_link() +
+  geom_node_point() +
+  geom_node_text(aes(label = name), 
+                 vjust = 1, 
+                 hjust = 1)
+```
+
+### 6.12 Revised version
+
+```{r}
+set.seed(1234)
+
+a <- grid::arrow(type = "closed", 
+                 length = unit(.15,
+                               "inches"))
+
+ggraph(bigram_graph, 
+       layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n), 
+                 show.legend = FALSE,
+                 arrow = a, 
+                 end_cap = circle(.07,
+                                  'inches')) +
+  geom_node_point(color = "lightblue", 
+                  size = 5) +
+  geom_node_text(aes(label = name), 
+                 vjust = 1, 
+                 hjust = 1) +
+  theme_void()
+```
+
+## 7 Self Trying: Comparing Topic Families
+
+In this self-trying section, I extend the teacher's example by comparing broader topic families rather than analysing all 20 newsgroups separately. This makes the patterns easier to interpret. I focus on four questions: which topic families contain more messages, which words appear most often, which words are most distinctive, and which words tend to appear together.
+
+### 7.1 Creating broader topic families
+
+The original data contains 20 detailed newsgroups. I group them into broader topic families based on the prefix of each newsgroup name. The `misc.forsale` group is retained as a separate category because it does not share a prefix with the other groups.
+
+```{r}
+topic_words <- usenet_words %>%
+  mutate(
+    topic_family = case_when(
+      str_detect(newsgroup, "^comp\\.") ~ "Computer",
+      str_detect(newsgroup, "^rec\\.") ~ "Recreation",
+      str_detect(newsgroup, "^sci\\.") ~ "Science",
+      str_detect(newsgroup, "^talk\\.") ~ "Politics and Religion",
+      newsgroup == "alt.atheism" ~ "Politics and Religion",
+      newsgroup == "soc.religion.christian" ~ "Politics and Religion",
+      newsgroup == "misc.forsale" ~ "For Sale",
+      TRUE ~ "Other"
+    )
+  )
+
+topic_words
+```
+
+### 7.2 Comparing the number of messages across topic families
+
+I first compare the number of unique messages in each topic family. This gives a simple overview of the dataset composition before analysing individual words.
+
+```{r}
+topic_messages <- raw_text %>%
+  mutate(
+    topic_family = case_when(
+      str_detect(newsgroup, "^comp\\.") ~ "Computer",
+      str_detect(newsgroup, "^rec\\.") ~ "Recreation",
+      str_detect(newsgroup, "^sci\\.") ~ "Science",
+      str_detect(newsgroup, "^talk\\.") ~ "Politics and Religion",
+      newsgroup == "alt.atheism" ~ "Politics and Religion",
+      newsgroup == "soc.religion.christian" ~ "Politics and Religion",
+      newsgroup == "misc.forsale" ~ "For Sale",
+      TRUE ~ "Other"
+    )
+  ) %>%
+  group_by(topic_family) %>%
+  summarise(messages = n_distinct(id), .groups = "drop")
+
+ topic_messages %>%
+  ggplot(aes(x = reorder(topic_family, messages),
+             y = messages,
+             fill = topic_family)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  labs(
+    title = "Number of Messages by Topic Family",
+    x = NULL,
+    y = "Number of unique messages"
+  ) +
+  theme_minimal()
+```
+
+### 7.3 Visualising the most frequent words in each topic family
+
+The next chart displays the ten most frequent words in each topic family. This chart shows the general vocabulary used in each area, but frequent words are not always the most distinctive words.
+
+```{r}
+top_topic_words <- topic_words %>%
+  count(topic_family, word, sort = TRUE) %>%
+  group_by(topic_family) %>%
+  slice_max(order_by = n,
+            n = 10,
+            with_ties = FALSE) %>%
+  ungroup() %>%
+  mutate(word = reorder_within(word, n, topic_family))
+
+top_topic_words %>%
+  ggplot(aes(x = n,
+             y = word,
+             fill = topic_family)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~topic_family,
+             scales = "free") +
+  scale_y_reordered() +
+  labs(
+    title = "Most Frequent Words within Each Topic Family",
+    x = "Word frequency",
+    y = NULL
+  ) +
+  theme_minimal()
+```
+
+### 7.4 Creating an interactive frequency table
+
+A DT table can be used to complement the visual comparison. It allows the user to search for a specific word or topic family.
+
+```{r}
+DT::datatable(
+  top_topic_words %>%
+    select(topic_family, word, n),
+  filter = "top",
+  rownames = FALSE,
+  colnames = c("Topic family", "Word", "Frequency"),
+  options = list(
+    pageLength = 10,
+    lengthMenu = c(10, 25, 50, 100),
+    autoWidth = TRUE
+  )
+)
+```
+
+## 8 Self Trying: Identifying Distinctive Words with TF-IDF
+
+Frequent words provide a broad summary, but they may appear in several topic families. TF-IDF places more weight on words that are especially important within one topic family and less common in the others.
+
+### 8.1 Computing TF-IDF by topic family
+
+```{r}
+topic_tf_idf <- topic_words %>%
+  count(topic_family, word, sort = TRUE) %>%
+  bind_tf_idf(word, topic_family, n) %>%
+  arrange(desc(tf_idf))
+
+topic_tf_idf
+```
+
+### 8.2 Visualising distinctive words in each topic family
+
+```{r}
+top_topic_tf_idf <- topic_tf_idf %>%
+  group_by(topic_family) %>%
+  slice_max(order_by = tf_idf,
+            n = 10,
+            with_ties = FALSE) %>%
+  ungroup() %>%
+  mutate(word = reorder_within(word, tf_idf, topic_family))
+
+top_topic_tf_idf %>%
+  ggplot(aes(x = tf_idf,
+             y = word,
+             fill = topic_family)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~topic_family,
+             scales = "free") +
+  scale_y_reordered() +
+  labs(
+    title = "Distinctive Words Identified by TF-IDF",
+    subtitle = "Higher values indicate words that are more specific to a topic family",
+    x = "TF-IDF",
+    y = NULL
+  ) +
+  theme_minimal()
+```
+
+### 8.3 Creating an interactive TF-IDF table
+
+```{r}
+DT::datatable(
+  topic_tf_idf,
+  filter = "top",
+  rownames = FALSE,
+  options = list(
+    pageLength = 10,
+    lengthMenu = c(10, 25, 50, 100),
+    autoWidth = TRUE
+  )
+) %>%
+  formatRound(columns = c("tf", "idf", "tf_idf"),
+              digits = 3)
+```
+
+## 9 Self Trying: Exploring Word Relationships
+
+The final part studies word relationships rather than individual word frequencies. I focus on words that repeatedly appear in the same message. To keep the graph readable, I retain only relatively frequent words and strong co-occurrence links.
+
+### 9.1 Preparing message-level words
+
+To make the relationship analysis faster and easier to read, I retain the 120 most frequent words before calculating word pairs. This avoids building an overly large network from rare terms.
+
+```{r}
+selected_words <- usenet_words %>%
+  count(word, sort = TRUE) %>%
+  slice_max(order_by = n,
+            n = 120,
+            with_ties = FALSE) %>%
+  pull(word)
+
+message_words <- cleaned_text %>%
+  unite(document_id,
+        newsgroup,
+        id,
+        remove = FALSE) %>%
+  unnest_tokens(word, text) %>%
+  filter(str_detect(word, "[a-z']$"),
+         !word %in% stop_words$word,
+         word %in% selected_words) %>%
+  distinct(document_id, word)
+
+message_words
+```
+
+### 9.2 Counting word pairs
+
+```{r}
+word_pairs <- message_words %>%
+  pairwise_count(word,
+                 document_id,
+                 sort = TRUE,
+                 upper = FALSE)
+
+word_pairs
+```
+
+### 9.3 Visualising a focused co-occurrence network
+
+Only the strongest 80 links are retained. This keeps the chart readable and guarantees that the graph contains the most important relationships even if the frequency distribution changes slightly.
+
+```{r}
+set.seed(1234)
+
+focused_word_pairs <- word_pairs %>%
+  slice_max(order_by = n,
+            n = 80,
+            with_ties = FALSE)
+
+focused_word_pairs %>%
+  graph_from_data_frame() %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(width = n,
+                     alpha = n),
+                 show.legend = FALSE) +
+  geom_node_point(size = 5,
+                  colour = "lightblue") +
+  geom_node_text(aes(label = name),
+                 repel = TRUE,
+                 size = 3) +
+  theme_void() +
+  labs(title = "Focused Word Co-occurrence Network")
+```
+
+### 9.4 Comparing common bigrams by topic family
+
+I also compare common two-word phrases. This helps preserve some local context that is lost when individual words are analysed separately.
+
+```{r}
+topic_bigrams <- cleaned_text %>%
+  mutate(
+    topic_family = case_when(
+      str_detect(newsgroup, "^comp\\.") ~ "Computer",
+      str_detect(newsgroup, "^rec\\.") ~ "Recreation",
+      str_detect(newsgroup, "^sci\\.") ~ "Science",
+      str_detect(newsgroup, "^talk\\.") ~ "Politics and Religion",
+      newsgroup == "alt.atheism" ~ "Politics and Religion",
+      newsgroup == "soc.religion.christian" ~ "Politics and Religion",
+      newsgroup == "misc.forsale" ~ "For Sale",
+      TRUE ~ "Other"
+    )
+  ) %>%
+  unnest_tokens(bigram,
+                text,
+                token = "ngrams",
+                n = 2) %>%
+  separate(bigram,
+           into = c("word1", "word2"),
+           sep = " ") %>%
+  filter(!word1 %in% stop_words$word,
+         !word2 %in% stop_words$word,
+         str_detect(word1, "[a-z']$"),
+         str_detect(word2, "[a-z']$")) %>%
+  count(topic_family, word1, word2, sort = TRUE) %>%
+  unite(bigram,
+        word1,
+        word2,
+        sep = " ")
+
+topic_bigrams
+```
+
+### 9.5 Visualising the most frequent bigrams
+
+```{r}
+top_topic_bigrams <- topic_bigrams %>%
+  group_by(topic_family) %>%
+  slice_max(order_by = n,
+            n = 8,
+            with_ties = FALSE) %>%
+  ungroup() %>%
+  mutate(bigram = reorder_within(bigram, n, topic_family))
+
+top_topic_bigrams %>%
+  ggplot(aes(x = n,
+             y = bigram,
+             fill = topic_family)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~topic_family,
+             scales = "free") +
+  scale_y_reordered() +
+  labs(
+    title = "Most Frequent Bigrams within Each Topic Family",
+    x = "Bigram frequency",
+    y = NULL
+  ) +
+  theme_minimal()
+```
+
+### 9.6 Interpretation
+
+The self-trying analysis adds a broader comparison across topic families. The frequency plots show the vocabulary that appears often, while the TF-IDF plots highlight words that are more distinctive. The co-occurrence network and bigram chart add context by showing which words tend to appear together. These methods complement the teacher's example because they move from detailed newsgroup-level analysis to a more interpretable topic-family comparison.

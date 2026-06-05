@@ -1,0 +1,450 @@
+---
+title: "Take-Home_Ex02"
+author: "JUNCHEN LI"
+date: "May 29,2026"
+date-modified: "last-modified"
+format: html
+editor: visual
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: auto
+---
+
+# 1 Introduction
+
+## 1.1 Background
+
+Tenant Thread operates through a multi-agent environment in which employees, personal agents, office systems, and external platforms interact through a large number of automated events. These interactions include email access, file access, task delegation, calendar scheduling, advice generation, and public posting activities.
+
+The key incident examined in this report is an anomalous post sent to SaidIT by John Windward on May 17, 2046, at approximately 4:21 AM. The incident raises an important operational question: was the post caused by a single isolated mistake, or was it the visible outcome of a broader failure pattern within the multi-agent system?
+
+Rather than treating the anomalous post as an isolated text-quality issue, this report reconstructs the underlying event chain. The analysis examines how instructions, files, people, agents, and systems interacted before the post was released. It also compares the latest incident with earlier suspicious behaviours to identify whether similar warning signals appeared previously.
+
+## 1.2 Investigation Objective
+
+The purpose of this report is to use visual analytics to trace the origin and propagation of the anomalous SaidIT post. The analysis focuses on four objectives:
+
+1. Reconstruct the exact sequence of events that led to the public post.
+2. Identify the people, agents, files, and systems involved in the event chain.
+3. Compare the latest incident with earlier suspicious behaviours.
+4. Recommend one targeted intervention point that could reduce the likelihood of recurrence.
+
+## 1.3 Analytical Questions
+
+This report addresses the following questions:
+
+- How was the anomalous SaidIT post generated?
+- Which people, personal agents, and systems were involved?
+- What was the confirmed content source of the post?
+- Did similar suspicious behaviours occur before the latest incident?
+- Where should the system intervene to prevent similar public releases?
+
+# 2 Getting Started
+
+## 2.1 Analytical Approach
+
+This investigation follows a staged visual analytics workflow. The first stage prepares and audits the raw JSON data. The second stage extracts suspicious instruction-file handoffs. The third stage reconstructs the latest incident and compares it with earlier suspicious chains. The final stage evaluates a targeted intervention point.
+
+This staged approach is important because the event log contains nested and heterogeneous records. Different event types contain different detail fields. Therefore, the analysis preserves the original JSON structure first and only extracts selected fields when they are needed for a specific analytical purpose.
+
+## 2.2 Analytical Tools
+
+The analysis is conducted in R using Quarto for reproducible reporting. The main packages support the following tasks:
+
+- `jsonlite` imports the raw JSON files.
+- `tidyverse` supports data cleaning, transformation, and visualisation.
+- `lubridate` standardises Unix timestamps and local time.
+- `DT` creates searchable interactive tables.
+- `plotly` supports interactive visual analytics.
+- `igraph`, `tidygraph`, and `ggraph` support network analysis.
+
+```{r}
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman")
+}
+
+pacman::p_load(
+  tidyverse,
+  jsonlite,
+  lubridate,
+  janitor,
+  scales,
+  DT,
+  plotly,
+  igraph,
+  ggraph,
+  tidygraph
+)
+
+theme_set(theme_minimal())
+```
+
+## 2.3 Data Sources
+
+The investigation uses two JSON files.
+
+- `MC2 data.json` contains the internal event timeline. Each record represents an action performed by a person, personal agent, office system, or external platform.
+- `org_chart.json` contains the Tenant Thread organization structure, including departments, teams, people, and reporting relationships.
+
+Before importing the data, the current project folder is checked to confirm that both JSON files are available.
+
+```{r}
+list.files()
+
+list.files("data/MC2")
+```
+
+# 3 Data Preparation and Quality Control
+
+## 3.1 Importing the Raw JSON Files
+
+The two JSON files are imported without simplifying nested structures. This choice is deliberate. The event log contains a `details` object whose structure changes across event types. For example, a file-access event may store a file path, while a task-delegation event may store a target agent and a nested task argument.
+
+To avoid losing information during import, the original nested structure is preserved. The raw objects are retained throughout the analysis so that later derived tables can always be traced back to the original records.
+
+```{r}
+mc2_raw <- jsonlite::fromJSON(
+  "data/MC2/MC2 data.json",
+  simplifyVector = FALSE
+)
+
+org_raw <- jsonlite::fromJSON(
+  "data/MC2/org_chart.json",
+  simplifyVector = FALSE
+)
+```
+
+## 3.2Inspecting the Top-Level Structure
+
+The top-level structure is inspected before any transformation is performed. This step confirms whether the expected components are present and provides a basic audit of the available records.
+
+For the event log, the main object should contain a description and an ordered list of events. For the organization chart, the main object should contain nodes and edges. The number of events, nodes, and edges is also recorded to establish the initial scale of the dataset.
+
+```{r}
+names(mc2_raw)
+
+names(org_raw)
+```
+
+```{r}
+length(mc2_raw$events)
+
+length(org_raw$nodes)
+
+length(org_raw$edges)
+```
+
+## 3.3 Creating the Raw Event Table
+
+The event records are converted into a tibble with five core variables:
+
+- `id`: the unique event identifier;
+- `short_name`: the action performed;
+- `when`: the original Unix timestamp;
+- `parties`: the people, agents, or systems involved;
+- `details`: additional nested information associated with the event.
+
+The `parties` and `details` variables are intentionally retained as list-columns. This preserves the original event structure and avoids prematurely flattening fields that may not exist for every event type.
+
+```{r}
+events_raw <- tibble(
+  id = map_int(mc2_raw$events, ~ .x$id),
+  short_name = map_chr(mc2_raw$events, ~ .x$short_name),
+  when = map_dbl(mc2_raw$events, ~ .x$when),
+  parties = map(mc2_raw$events, ~ .x$parties),
+  details = map(mc2_raw$events, ~ .x$details)
+)
+
+glimpse(events_raw)
+```
+
+## 3.4 Standardising Timestamp Variables
+
+The raw `when` variable is stored as a Unix timestamp. To support reproducible sequence analysis, the timestamps are converted into both UTC time and local time.
+
+UTC time is retained as the standard reference. Local time is created using the `America/Los_Angeles` time zone because the incident description refers to an anomalous SaidIT post sent at approximately 4:21 AM local time.
+
+The analysis also creates date-level and hour-level variables. These variables will later support timeline visualisations, historical comparisons, and incident-window filtering.
+
+```{r}
+events_clean <- events_raw %>%
+  mutate(
+    timestamp_utc = as_datetime(
+      when,
+      tz = "UTC"
+    ),
+    timestamp_local = with_tz(
+      timestamp_utc,
+      tzone = "America/Los_Angeles"
+    ),
+    event_date_local = as_date(
+      timestamp_local
+    ),
+    event_hour_local = floor_date(
+      timestamp_local,
+      unit = "hour"
+    ),
+    party_count = map_int(
+      parties,
+      length
+    )
+  )
+
+glimpse(events_clean)
+```
+
+## 3.5 Reviewing the Available Time Range
+
+The time range is checked before further analysis. This step verifies that the imported records cover the key incident period and identifies whether the dataset includes historical and post-incident events.
+
+```{r}
+event_time_range <- events_clean %>%
+  summarise(
+    earliest_event_utc = min(
+      timestamp_utc,
+      na.rm = TRUE
+    ),
+    latest_event_utc = max(
+      timestamp_utc,
+      na.rm = TRUE
+    ),
+    earliest_event_local = min(
+      timestamp_local,
+      na.rm = TRUE
+    ),
+    latest_event_local = max(
+      timestamp_local,
+      na.rm = TRUE
+    ),
+    number_of_days = as.numeric(
+      difftime(
+        max(timestamp_local, na.rm = TRUE),
+        min(timestamp_local, na.rm = TRUE),
+        units = "days"
+      )
+    )
+  )
+
+event_time_range
+```
+
+## 3.6 Defining the Key Incident Time
+
+The investigation is anchored around the anomalous SaidIT post sent on May 17, 2046, at approximately 4:21 AM local time.
+
+A dedicated incident-time object is created so that all later filters use a consistent reference point.
+
+```{r}
+incident_time_local <- ymd_hms(
+  "2046-05-17 04:21:00",
+  tz = "America/Los_Angeles"
+)
+
+incident_time_utc <- with_tz(
+  incident_time_local,
+  tzone = "UTC"
+)
+
+incident_time_local
+
+incident_time_utc
+```
+
+## 3.7 Auditing Event Data Quality
+
+Before analysing suspicious behaviours, the event table is checked for structural problems.
+
+The audit focuses on:
+
+- duplicated event IDs;
+- missing event IDs;
+- missing action names;
+- missing timestamps;
+- events without listed parties;
+- invalid party counts.
+
+These checks are important because missing timestamps or duplicated IDs could distort event ordering and inflate interaction counts.
+
+```{r}
+event_quality_summary <- events_clean %>%
+  summarise(
+    total_events = n(),
+    unique_event_ids = n_distinct(id),
+    duplicate_event_ids = n() - n_distinct(id),
+    missing_event_ids = sum(is.na(id)),
+    missing_short_names = sum(is.na(short_name)),
+    missing_timestamps = sum(is.na(timestamp_utc)),
+    empty_parties = sum(party_count == 0),
+    minimum_party_count = min(
+      party_count,
+      na.rm = TRUE
+    ),
+    maximum_party_count = max(
+      party_count,
+      na.rm = TRUE
+    )
+  )
+
+event_quality_summary
+```
+
+## 3.8 Identifying Duplicate Event IDs
+
+A separate duplicate check is created so that repeated event identifiers can be reviewed directly.
+
+```{r}
+duplicate_event_ids <- events_clean %>%
+  count(
+    id,
+    name = "record_count"
+  ) %>%
+  filter(
+    record_count > 1
+  )
+
+duplicate_event_ids
+```
+
+## 3.9 Reviewing Event Types
+
+The distribution of event types provides an initial view of how the multi-agent system operates.
+
+This summary helps distinguish routine actions, such as email access and file reading, from incident-relevant activities, such as subordinate-task delegation, file deletion, SaidIT post checks, and public posting events.
+
+```{r}
+event_type_summary <- events_clean %>%
+  count(
+    short_name,
+    sort = TRUE
+  ) %>%
+  mutate(
+    event_share = n / sum(n)
+  )
+
+event_type_summary
+```
+
+## 3.10 Displaying the Most Frequent Event Types
+
+The most frequent event types are displayed first to establish a high-level system baseline.
+
+```{r}
+event_type_summary %>%
+  slice_head(
+    n = 20
+  )
+```
+
+## 3.11 Interactive Event-Type Table
+
+A searchable table is included to support further exploration of all event types.
+
+```{r}
+DT::datatable(
+  event_type_summary %>%
+    mutate(
+      event_share = percent(
+        event_share,
+        accuracy = 0.01
+      )
+    ),
+  options = list(
+    pageLength = 15,
+    scrollX = TRUE
+  ),
+  rownames = FALSE
+)
+```
+
+## 3.12 Inspecting the Immediate Incident Window
+
+An initial incident window is created to inspect events occurring shortly before and shortly after the anomalous post.
+
+This narrow window is useful for identifying the final actions that occurred immediately before public release. The full propagation chain will be reconstructed in a later section.
+
+```{r}
+incident_window_5min <- events_clean %>%
+  filter(
+    timestamp_local >= incident_time_local - minutes(5),
+    timestamp_local <= incident_time_local + minutes(5)
+  ) %>%
+  select(
+    id,
+    timestamp_local,
+    short_name,
+    parties,
+    details
+  ) %>%
+  arrange(
+    timestamp_local,
+    id
+  )
+
+incident_window_5min
+```
+
+## 3.13 Inspecting a Wider Incident Window
+
+A wider one-hour window is also created to provide additional context around the final posting event.
+
+```{r}
+incident_window_1hour <- events_clean %>%
+  filter(
+    timestamp_local >= incident_time_local - hours(1),
+    timestamp_local <= incident_time_local + minutes(5)
+  ) %>%
+  select(
+    id,
+    timestamp_local,
+    short_name,
+    parties,
+    details
+  ) %>%
+  arrange(
+    timestamp_local,
+    id
+  )
+
+incident_window_1hour
+```
+
+## 3.14 Reviewing Incident-Relevant Event Types
+
+The following filter checks whether SaidIT-related events and file-deletion events appear in the imported dataset.
+
+```{r}
+incident_relevant_event_types <- events_clean %>%
+  filter(
+    str_detect(
+      short_name,
+      regex(
+        "saidit|post|delete_file|queue_subordinate_task",
+        ignore_case = TRUE
+      )
+    )
+  ) %>%
+  count(
+    short_name,
+    sort = TRUE
+  )
+
+incident_relevant_event_types
+```
+
+::: {.callout-note}
+## Output Warning
+
+The first two phases establish a reproducible analytical foundation.
+
+The raw JSON objects are preserved, event records are converted into a structured table, timestamps are standardised, and core quality-control checks are completed. The event-type review and incident-window inspection provide the first view of the system activity surrounding the anomalous SaidIT post.
+
+The next phase will expand party-level records, normalise actor names, and identify which people, agents, and systems appear most frequently in the event log.
+:::
+
+
+
+
+
+
