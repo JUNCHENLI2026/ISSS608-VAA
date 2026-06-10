@@ -1,0 +1,230 @@
+```css
+/* ---------------------------------
+   Page layout
+---------------------------------- */
+
+body {
+  font-size: 16px;
+  line-height: 1.65;
+  color: #263238;
+}
+
+main {
+  max-width: 1180px;
+}
+
+h1, h2, h3 {
+  color: #17324d;
+  font-weight: 750;
+}
+
+h1 {
+  border-bottom: 2px solid #d8e4ed;
+  padding-bottom: 10px;
+  margin-top: 36px;
+}
+
+h2 {
+  margin-top: 30px;
+}
+
+h3 {
+  margin-top: 22px;
+}
+
+p {
+  max-width: 1000px;
+}
+
+/* ---------------------------------
+   Hero banner
+---------------------------------- */
+
+.proposal-hero {
+  background: linear-gradient(135deg, #17324d 0%, #315d7d 100%);
+  border-radius: 18px;
+  padding: 34px 36px;
+  margin: 18px 0 32px 0;
+  color: white;
+  box-shadow: 0 8px 20px rgba(23, 50, 77, 0.18);
+}
+
+.proposal-hero h1 {
+  margin: 0 0 8px 0;
+  padding: 0;
+  border: none;
+  color: white;
+  font-size: 38px;
+}
+
+.proposal-hero p {
+  margin: 0;
+  color: #dbeaf4;
+  font-size: 18px;
+}
+
+/* ---------------------------------
+   Highlight boxes
+---------------------------------- */
+
+.question-box {
+  border-left: 5px solid #d96c4c;
+  background: #fff7f3;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 20px 0;
+  font-size: 18px;
+}
+
+.info-card {
+  border: 1px solid #d8e4ed;
+  border-radius: 12px;
+  background: #f8fbfd;
+  padding: 16px 18px;
+  height: 100%;
+}
+
+.info-card h3 {
+  margin-top: 0;
+  color: #285879;
+  font-size: 17px;
+}
+
+.info-card p {
+  margin-bottom: 0;
+  font-size: 15px;
+}
+
+.objective-card {
+  border-top: 4px solid #4e89ae;
+  border-radius: 10px;
+  background: #f8fbfd;
+  padding: 15px 17px;
+  height: 100%;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.05);
+}
+
+.objective-number {
+  font-size: 24px;
+  font-weight: 800;
+  color: #4e89ae;
+  margin-bottom: 4px;
+}
+
+.objective-text {
+  font-size: 14px;
+  color: #334e5c;
+}
+
+/* ---------------------------------
+   Storyboard
+---------------------------------- */
+
+.storyboard-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+  margin: 18px 0 24px 0;
+}
+
+.story-box {
+  flex: 1 1 135px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #6d9dbd;
+  border-radius: 10px;
+  background: #edf6fb;
+  padding: 10px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #264c68;
+}
+
+.story-arrow {
+  color: #78909c;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* ---------------------------------
+   Tables
+---------------------------------- */
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #d8e4ed;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+thead {
+  background: #315d7d;
+  color: white;
+}
+
+th {
+  padding: 12px;
+}
+
+td {
+  padding: 11px 12px;
+  border-bottom: 1px solid #e5edf2;
+}
+
+tbody tr:nth-child(even) {
+  background: #f7fafc;
+}
+
+tbody tr:hover {
+  background: #edf6fb;
+}
+
+/* ---------------------------------
+   Prototype preview
+---------------------------------- */
+
+.prototype-preview {
+  border: 1px solid #d8e4ed;
+  border-radius: 12px;
+  background: white;
+  padding: 15px 17px;
+  height: 100%;
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.06);
+}
+
+.prototype-preview h3 {
+  margin-top: 0;
+  color: #285879;
+  font-size: 17px;
+}
+
+.prototype-preview p {
+  margin-bottom: 0;
+  font-size: 14px;
+}
+
+/* ---------------------------------
+   Mobile layout
+---------------------------------- */
+
+@media (max-width: 780px) {
+  .proposal-hero {
+    padding: 25px 22px;
+  }
+
+  .proposal-hero h1 {
+    font-size: 30px;
+  }
+
+  .story-arrow {
+    display: none;
+  }
+}
+```

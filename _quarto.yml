@@ -45,6 +45,12 @@ website:
           href: "Take-Home_Ex/Take-Home_Ex01/executive_summary.html"
         - text: "Take-Home Exercise 2" 
           href: "Take-Home_Ex/Take-Home_Ex02/Take-Home_Ex02.html"
+    - text: "ISSS608 Project"
+      menu:
+        - text: "Project Proposal" 
+          href: "Proposal/Proposal (v 1.2).qmd"
+        - text: "Project Meeting Minutes" 
+          href: "Meeting Minutes/Meeting_Mins_1/Meeting_Mins_1.qmd"
     right: 
       - href: index.qmd
         text: Home
