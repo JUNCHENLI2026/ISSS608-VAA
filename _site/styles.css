@@ -1,0 +1,176 @@
+/* css styles */
+.insight-box {
+  background-color: #252a31;
+  border-left: 6px solid #5dade2;
+  border-top: 1px solid #3a4654;
+  border-right: 1px solid #3a4654;
+  border-bottom: 1px solid #3a4654;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin: 1.4rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.insight-box h3 {
+  margin-top: 0;
+  margin-bottom: 0.7rem;
+  color: #d6eaf8;
+  font-weight: 700;
+}
+
+.insight-box ul {
+  margin-bottom: 0;
+}
+
+.insight-box li {
+  margin-bottom: 0.45rem;
+}
+
+
+.observation-box {
+  background-color: #242b26;
+  border-left: 6px solid #58d68d;
+  border-top: 1px solid #3d4f42;
+  border-right: 1px solid #3d4f42;
+  border-bottom: 1px solid #3d4f42;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin: 1.4rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.observation-box h3 {
+  margin-top: 0;
+  margin-bottom: 0.7rem;
+  color: #d5f5e3;
+  font-weight: 700;
+}
+
+.observation-box ol,
+.observation-box ul {
+  margin-bottom: 0;
+}
+
+.observation-box li {
+  margin-bottom: 0.45rem;
+}
+
+
+.warning-box {
+  background-color: #302922;
+  border-left: 6px solid #f5b041;
+  border-top: 1px solid #5a4933;
+  border-right: 1px solid #5a4933;
+  border-bottom: 1px solid #5a4933;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin: 1.4rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.warning-box h3 {
+  margin-top: 0;
+  margin-bottom: 0.7rem;
+  color: #fdebd0;
+  font-weight: 700;
+}
+
+.warning-box ul {
+  margin-bottom: 0;
+}
+
+.warning-box li {
+  margin-bottom: 0.45rem;
+}
+
+/* =========================================
+   DT TABLE - LIGHT STYLE
+   ========================================= */
+
+/* Entire DT table area */
+.dataTables_wrapper {
+  background-color: #ffffff !important;
+  color: #222222 !important;
+  padding: 16px !important;
+  border-radius: 8px !important;
+}
+
+/* Search box, dropdown and column filters */
+.dataTables_wrapper input,
+.dataTables_wrapper select {
+  background-color: #ffffff !important;
+  color: #222222 !important;
+  border: 1px solid #bdbdbd !important;
+  border-radius: 4px !important;
+  padding: 5px !important;
+}
+
+/* Placeholder text */
+.dataTables_wrapper input::placeholder {
+  color: #666666 !important;
+  opacity: 1 !important;
+}
+
+/* Main table */
+.dataTables_wrapper table.dataTable {
+  background-color: #ffffff !important;
+  color: #222222 !important;
+  border-collapse: collapse !important;
+}
+
+/* Header */
+.dataTables_wrapper table.dataTable thead th {
+  background-color: #f2f2f2 !important;
+  color: #111111 !important;
+  border-bottom: 1px solid #cccccc !important;
+}
+
+/* Body cells */
+.dataTables_wrapper table.dataTable tbody td {
+  background-color: #ffffff !important;
+  color: #222222 !important;
+  border-bottom: 1px solid #eeeeee !important;
+}
+
+/* Alternating row colour */
+.dataTables_wrapper table.dataTable.stripe tbody tr.odd td,
+.dataTables_wrapper table.dataTable.display tbody tr.odd td {
+  background-color: #fafafa !important;
+}
+
+/* Hover effect */
+.dataTables_wrapper table.dataTable tbody tr:hover td {
+  background-color: #f1f5f9 !important;
+}
+
+/* Top and bottom control text */
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate,
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+  color: #222222 !important;
+}
+
+/* Pagination buttons */
+.dataTables_wrapper .paginate_button {
+  color: #222222 !important;
+  background: #ffffff !important;
+  border: 1px solid transparent !important;
+}
+
+/* Current page */
+.dataTables_wrapper .paginate_button.current {
+  color: #111111 !important;
+  background: #eeeeee !important;
+  border: 1px solid #cccccc !important;
+}
+
+/* Previous and next buttons */
+.dataTables_wrapper .paginate_button.disabled {
+  color: #888888 !important;
+}
+
+/* Horizontal scrollbar area */
+.dataTables_wrapper .dataTables_scrollBody {
+  background-color: #ffffff !important;
+}
