@@ -1,0 +1,607 @@
+---
+title: "Hands-on Exercise 09c: Analytical Mapping"
+author: "JUNCHEN LI"
+date: "June 15, 2026"
+date-modified: "last-modified"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-tools: true
+execute:
+  warning: false
+  message: false
+  freeze: false
+---
+
+# Overview
+
+This hands-on exercise follows Chapter 23, **Analytical Mapping**. The teacher example focuses on analytical maps for Nigeria water points at the LGA level. The main techniques include choropleth mapping, rate mapping, percentile maps, and box maps.
+
+The self-trying section keeps the same learning flow, but focuses on a slightly different analytical question:
+
+> Which LGAs should be considered higher priority when both the number and the proportion of non-functional water points are considered?
+
+# 1 Getting Started
+
+## 1.1 Installing and loading packages
+
+```{r}
+pacman::p_load(tmap, tidyverse, sf, DT)
+```
+
+```{r}
+tmap_mode("plot")
+```
+
+# 2 Teacher Example: Importing Data
+
+## 2.1 Importing prepared geospatial data
+
+The prepared data set `NGA_wp.rds` is a simple feature polygon data frame. It contains water point information at the Local Government Area (LGA) level in Nigeria.
+
+```{r}
+NGA_wp <- read_rds("data/rds/NGA_wp.rds")
+```
+
+```{r}
+NGA_wp
+```
+
+```{r}
+glimpse(NGA_wp)
+```
+
+# 3 Teacher Example: Basic Choropleth Mapping
+
+## 3.1 Visualising the distribution of functional water points
+
+This map shows the number of functional water points by LGA. It is useful as a basic count map, but it should be interpreted carefully because larger or more populated LGAs may naturally have more water points.
+
+```{r}
+p_functional <- tm_shape(NGA_wp) +
+  tm_polygons(
+    fill = "wp_functional",
+    fill.scale = tm_scale_intervals(
+      style = "equal",
+      n = 10,
+      values = "brewer.blues"
+    ),
+    fill.legend = tm_legend(
+      title = "Functional water points",
+      position = c("right", "bottom")
+    )
+  ) +
+  tm_borders(
+    lwd = 0.1,
+    fill_alpha = 1
+  ) +
+  tm_title("Distribution of Functional Water Points by LGAs")
+
+p_functional
+```
+
+## 3.2 Visualising the distribution of total water points
+
+```{r}
+p_total <- tm_shape(NGA_wp) +
+  tm_polygons(
+    fill = "total_wp",
+    fill.scale = tm_scale_intervals(
+      style = "equal",
+      n = 10,
+      values = "brewer.blues"
+    ),
+    fill.legend = tm_legend(
+      title = "Total water points",
+      position = c("right", "bottom")
+    )
+  ) +
+  tm_borders(
+    lwd = 0.1,
+    fill_alpha = 1
+  ) +
+  tm_title("Distribution of Total Water Points by LGAs")
+
+p_total
+```
+
+## 3.3 Comparing total and functional water points
+
+```{r}
+tmap_arrange(p_total, p_functional, nrow = 1)
+```
+
+# 4 Teacher Example: Choropleth Map for Rates
+
+## 4.1 Deriving rate variables
+
+A count map can be misleading because water points are not equally distributed across LGAs. Therefore, it is useful to derive rates.
+
+```{r}
+NGA_wp <- NGA_wp %>%
+  mutate(
+    pct_functional = if_else(
+      total_wp > 0,
+      wp_functional / total_wp,
+      NA_real_
+    ),
+    pct_nonfunctional = if_else(
+      total_wp > 0,
+      wp_nonfunctional / total_wp,
+      NA_real_
+    )
+  )
+```
+
+```{r}
+summary(NGA_wp$pct_functional)
+summary(NGA_wp$pct_nonfunctional)
+```
+
+## 4.2 Plotting a rate map of functional water points
+
+```{r}
+tm_shape(NGA_wp) +
+  tm_polygons(
+    fill = "pct_functional",
+    fill.scale = tm_scale_intervals(
+      style = "equal",
+      n = 10,
+      values = "brewer.blues"
+    ),
+    fill.legend = tm_legend(
+      title = "Functional rate",
+      position = c("right", "bottom")
+    )
+  ) +
+  tm_borders(
+    lwd = 0.1,
+    fill_alpha = 1
+  ) +
+  tm_title("Rate Map of Functional Water Points by LGAs")
+```
+
+## 4.3 Plotting a rate map of non-functional water points
+
+```{r}
+tm_shape(NGA_wp) +
+  tm_polygons(
+    fill = "pct_nonfunctional",
+    fill.scale = tm_scale_intervals(
+      style = "equal",
+      n = 10,
+      values = "brewer.reds"
+    ),
+    fill.legend = tm_legend(
+      title = "Non-functional rate",
+      position = c("right", "bottom")
+    )
+  ) +
+  tm_borders(
+    lwd = 0.1,
+    fill_alpha = 1
+  ) +
+  tm_title("Rate Map of Non-functional Water Points by LGAs")
+```
+
+# 5 Teacher Example: Extreme Value Maps
+
+Extreme value maps help identify spatial outliers. Instead of focusing only on general distribution, they highlight LGAs located at the lower or upper tails of the distribution.
+
+## 5.1 Preparing clean data
+
+```{r}
+NGA_wp_clean <- NGA_wp %>%
+  drop_na(pct_functional, pct_nonfunctional, wp_nonfunctional, total_wp)
+```
+
+## 5.2 Creating a helper function to extract a variable
+
+```{r}
+get_var <- function(vname, df) {
+  v <- df[vname] %>%
+    st_set_geometry(NULL)
+  v <- unname(v[, 1])
+  return(v)
+}
+```
+
+## 5.3 Percentile map function
+
+The percentile map uses six categories: 0-1%, 1-10%, 10-50%, 50-90%, 90-99%, and 99-100%.
+
+```{r}
+percentmap <- function(vnam, df, legtitle = NA, mtitle = "Percentile Map",
+                       palette = "brewer.reds") {
+  
+  percent <- c(0, .01, .1, .5, .9, .99, 1)
+  
+  var <- get_var(vnam, df)
+  var <- var[!is.na(var)]
+  
+  bperc <- quantile(
+    var,
+    percent,
+    na.rm = TRUE,
+    names = FALSE
+  )
+  
+  bperc <- unique(as.numeric(bperc))
+  
+  if (length(bperc) < 4) {
+    bperc <- pretty(var, n = 5)
+    bperc <- unique(as.numeric(bperc))
+  }
+  
+  tm_shape(df) +
+    tm_polygons(
+      fill = vnam,
+      fill.scale = tm_scale_intervals(
+        breaks = bperc,
+        values = palette
+      ),
+      fill.legend = tm_legend(
+        title = legtitle,
+        position = c("right", "bottom")
+      )
+    ) +
+    tm_borders(lwd = 0.1) +
+    tm_title(mtitle)
+}
+```
+
+## 5.4 Test driving the percentile map
+
+```{r}
+percentmap(
+  "total_wp",
+  NGA_wp_clean,
+  legtitle = "Total water points",
+  mtitle = "Percentile Map of Total Water Points"
+)
+```
+
+## 5.5 Using a boxplot to understand outliers
+
+```{r}
+ggplot(
+  data = NGA_wp_clean,
+  aes(
+    x = "",
+    y = wp_nonfunctional
+  )
+) +
+  geom_boxplot() +
+  labs(
+    title = "Boxplot of Non-functional Water Points",
+    x = NULL,
+    y = "Number of non-functional water points"
+  ) +
+  theme_minimal()
+```
+
+## 5.6 Creating the boxbreaks function
+
+```{r}
+boxbreaks <- function(v, mult = 1.5) {
+
+  qv <- unname(quantile(v, na.rm = TRUE))
+  iqr <- qv[4] - qv[2]
+  upfence <- qv[4] + mult * iqr
+  lofence <- qv[2] - mult * iqr
+
+  bb <- vector(mode = "numeric", length = 7)
+
+  if (lofence < qv[1]) {
+    bb[1] <- lofence
+    bb[2] <- floor(qv[1])
+  } else {
+    bb[2] <- lofence
+    bb[1] <- qv[1]
+  }
+
+  if (upfence > qv[5]) {
+    bb[7] <- upfence
+    bb[6] <- ceiling(qv[5])
+  } else {
+    bb[6] <- upfence
+    bb[7] <- qv[5]
+  }
+
+  bb[3:5] <- qv[2:4]
+
+  return(bb)
+}
+```
+
+```{r}
+var_nonfunctional <- get_var("wp_nonfunctional", NGA_wp_clean)
+boxbreaks(var_nonfunctional)
+```
+
+## 5.7 Box map function
+
+```{r}
+boxmap <- function(vnam, df,
+                   legtitle = NA,
+                   mtitle = "Box Map",
+                   mult = 1.5) {
+
+  var <- get_var(vnam, df)
+  bb <- boxbreaks(var, mult)
+
+  tm_shape(df) +
+    tm_polygons(
+      fill = vnam,
+      fill.scale = tm_scale_intervals(
+        breaks = bb,
+        values = "brewer.blues"
+      ),
+      fill.legend = tm_legend(
+        title = legtitle,
+        position = c("right", "bottom")
+      )
+    ) +
+    tm_borders(lwd = 0.1) +
+    tm_title(mtitle)
+}
+```
+
+## 5.8 Test driving the box map
+
+```{r}
+boxmap(
+  "wp_nonfunctional",
+  NGA_wp_clean,
+  legtitle = "Non-functional water points",
+  mtitle = "Box Map of Non-functional Water Points"
+)
+```
+
+# 6 Self Trying: Mapping Water Point Service Risk
+
+In this self-trying section, I use the same analytical mapping techniques from the teacher example, but I focus on a practical planning question. Instead of mapping only the number of water points or only the rate of functionality, I combine both the number and the rate of non-functional water points to identify higher-priority LGAs.
+
+## 6.1 Preparing additional indicators
+
+```{r}
+NGA_self <- NGA_wp %>%
+  mutate(
+    pct_functional = if_else(
+      total_wp > 0,
+      wp_functional / total_wp,
+      NA_real_
+    ),
+    pct_nonfunctional = if_else(
+      total_wp > 0,
+      wp_nonfunctional / total_wp,
+      NA_real_
+    )
+  ) %>%
+  drop_na(pct_functional, pct_nonfunctional, wp_nonfunctional, total_wp)
+```
+
+The following code tries to identify a suitable LGA name column. If the data set uses a different name field, the code still creates a usable `lga_label`.
+
+```{r}
+candidate_name_cols <- c(
+  "shapeName", "ADM2_EN", "LGA", "lga", "lga_name",
+  "ADM2_NAME", "name", "Name", "NAME"
+)
+
+lga_name_col <- candidate_name_cols[
+  candidate_name_cols %in% names(NGA_self)
+][1]
+
+if (is.na(lga_name_col)) {
+  NGA_self <- NGA_self %>%
+    mutate(lga_label = paste0("LGA_", row_number()))
+} else {
+  NGA_self <- NGA_self %>%
+    mutate(lga_label = as.character(.data[[lga_name_col]]))
+}
+```
+
+## 6.2 Comparing count map and rate map
+
+This comparison shows why rate maps are important. A high count of non-functional water points may simply reflect a large number of total water points, while a high rate indicates a larger share of local water points are non-functional.
+
+```{r}
+p_count_nonfunctional <- tm_shape(NGA_self) +
+  tm_polygons(
+    fill = "wp_nonfunctional",
+    fill.scale = tm_scale_intervals(
+      style = "quantile",
+      n = 5,
+      values = "brewer.reds"
+    ),
+    fill.legend = tm_legend(
+      title = "Non-functional count",
+      position = c("right", "bottom")
+    )
+  ) +
+  tm_borders(lwd = 0.1) +
+  tm_title("Count of Non-functional Water Points")
+
+p_rate_nonfunctional <- tm_shape(NGA_self) +
+  tm_polygons(
+    fill = "pct_nonfunctional",
+    fill.scale = tm_scale_intervals(
+      style = "quantile",
+      n = 5,
+      values = "brewer.reds"
+    ),
+    fill.legend = tm_legend(
+      title = "Non-functional rate",
+      position = c("right", "bottom")
+    )
+  ) +
+  tm_borders(lwd = 0.1) +
+  tm_title("Rate of Non-functional Water Points")
+
+tmap_arrange(
+  p_count_nonfunctional,
+  p_rate_nonfunctional,
+  nrow = 1
+)
+```
+
+## 6.3 Creating a priority flag
+
+I define priority LGAs as areas that are in the top 10% for both the number of non-functional water points and the proportion of non-functional water points. This rule helps avoid overreacting to LGAs with a high rate but very few water points, or LGAs with many failures simply because they have many water points.
+
+```{r}
+count_cutoff <- quantile(
+  NGA_self$wp_nonfunctional,
+  0.90,
+  na.rm = TRUE
+)
+
+rate_cutoff <- quantile(
+  NGA_self$pct_nonfunctional,
+  0.90,
+  na.rm = TRUE
+)
+
+NGA_self <- NGA_self %>%
+  mutate(
+    high_count = wp_nonfunctional >= count_cutoff,
+    high_rate = pct_nonfunctional >= rate_cutoff,
+    priority_group = case_when(
+      high_count & high_rate ~ "High count and high rate",
+      high_count & !high_rate ~ "High count only",
+      !high_count & high_rate ~ "High rate only",
+      TRUE ~ "Lower priority"
+    ),
+    priority_group = factor(
+      priority_group,
+      levels = c(
+        "High count and high rate",
+        "High count only",
+        "High rate only",
+        "Lower priority"
+      )
+    )
+  )
+```
+
+```{r}
+NGA_self %>%
+  st_set_geometry(NULL) %>%
+  count(priority_group)
+```
+
+## 6.4 Mapping priority groups
+
+```{r}
+tm_shape(NGA_self) +
+  tm_polygons(
+    fill = "priority_group",
+    fill.scale = tm_scale_categorical(
+      values = c(
+        "High count and high rate" = "#b2182b",
+        "High count only" = "#ef8a62",
+        "High rate only" = "#fddbc7",
+        "Lower priority" = "#f0f0f0"
+      )
+    ),
+    fill.legend = tm_legend(
+      title = "Priority group",
+      position = c("right", "bottom")
+    )
+  ) +
+  tm_borders(lwd = 0.1) +
+  tm_title("Priority Areas Based on Non-functional Water Point Burden")
+```
+
+## 6.5 Percentile map of non-functional rate
+
+```{r}
+percentmap(
+  "pct_nonfunctional",
+  NGA_self,
+  legtitle = "Non-functional rate",
+  mtitle = "Percentile Map of Non-functional Water Point Rate",
+  palette = "brewer.reds"
+)
+```
+
+## 6.6 Box map of non-functional rate
+
+```{r}
+boxmap(
+  "pct_nonfunctional",
+  NGA_self,
+  legtitle = "Non-functional rate",
+  mtitle = "Box Map of Non-functional Water Point Rate"
+)
+```
+
+## 6.7 Top priority LGAs table
+
+```{r}
+priority_table <- NGA_self %>%
+  st_set_geometry(NULL) %>%
+  transmute(
+    LGA = lga_label,
+    total_wp,
+    wp_functional,
+    wp_nonfunctional,
+    pct_functional = round(pct_functional, 3),
+    pct_nonfunctional = round(pct_nonfunctional, 3),
+    priority_group
+  ) %>%
+  arrange(
+    desc(priority_group == "High count and high rate"),
+    desc(wp_nonfunctional),
+    desc(pct_nonfunctional)
+  )
+
+DT::datatable(
+  priority_table,
+  filter = "top",
+  rownames = FALSE,
+  options = list(
+    pageLength = 15,
+    autoWidth = TRUE
+  )
+)
+```
+
+## 6.8 Focused map of the most critical LGAs
+
+This final map keeps all LGAs visible but highlights the areas that are both high in count and high in rate. It supports a clearer planning story.
+
+```{r}
+critical_lgas <- NGA_self %>%
+  filter(priority_group == "High count and high rate")
+
+tm_shape(NGA_self) +
+  tm_polygons(
+    col = "grey80",
+    fill = "grey95"
+  ) +
+  tm_borders(lwd = 0.1, col = "white") +
+  tm_shape(critical_lgas) +
+  tm_polygons(
+    fill = "pct_nonfunctional",
+    fill.scale = tm_scale_intervals(
+      style = "quantile",
+      n = 4,
+      values = "brewer.reds"
+    ),
+    fill.legend = tm_legend(
+      title = "Non-functional rate",
+      position = c("right", "bottom")
+    )
+  ) +
+  tm_borders(lwd = 0.3, col = "black") +
+  tm_title("Critical LGAs: High Count and High Rate of Non-functional Water Points")
+```
+
+## 6.9 Interpretation
+
+The self-trying analysis shows that count maps and rate maps answer different questions. Count maps help identify LGAs with a large absolute number of non-functional water points, while rate maps reveal where non-functionality is relatively more severe. The priority map combines both perspectives and highlights LGAs that are likely to require more urgent intervention because they have both a high number and a high proportion of non-functional water points. This makes the map more useful for planning than using only one indicator.

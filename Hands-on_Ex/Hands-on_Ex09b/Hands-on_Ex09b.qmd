@@ -1,0 +1,363 @@
+---
+title: "Hands-on Exercise 9b: Visualising Geospatial Point Data"
+author: "JUNCHEN LI"
+date: "June 16, 2026"
+date-modified: "last-modified"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: show
+    code-tools: true
+    df-print: paged
+execute:
+  warning: false
+  message: false
+---
+
+## 1 Overview
+
+This hands-on exercise follows the learning flow of Chapter 22 from *R for Visual Analytics*. The teacher example focuses on visualising Singapore Pools outlets as geospatial point data. The main visualisation method is the proportional symbol map, where the size of each point symbol represents the magnitude of a numeric variable.
+
+In this file, I first reproduce the teacher example. Then, in the **Self Trying** section, I extend the analysis by looking at high-winning outlets, zero-winning outlets, outlet type differences, and spatial concentration patterns.
+
+## 2 Getting Started
+
+### 2.1 Loading R packages
+
+```{r}
+pacman::p_load(
+  sf,
+  tmap,
+  tidyverse,
+  DT
+)
+```
+
+For this exercise, the `sf` package is used to handle simple feature data, `tmap` is used for thematic mapping, and `tidyverse` is used for data wrangling.
+
+## 3 Teacher Example: Geospatial Data Wrangling
+
+### 3.1 Importing Singapore Pools data
+
+The code chunk below imports the Singapore Pools outlet data from a CSV file.
+
+```{r}
+sgpools <- read_csv("data/aspatial/SGPools_svy21.csv")
+
+sgpools
+```
+
+### 3.2 Checking the data structure
+
+Before converting the table into a geospatial object, I inspect the field names and data types.
+
+```{r}
+glimpse(sgpools)
+```
+
+The important fields are:
+
+- `XCOORD`: x-coordinate in SVY21 projected coordinate system
+- `YCOORD`: y-coordinate in SVY21 projected coordinate system
+- `OUTLET TYPE`: outlet category
+- `Gp1Gp2 Winnings`: number of Group 1 and Group 2 winnings
+
+### 3.3 Creating a simple feature data frame
+
+The data is currently an aspatial table. The code below converts it into an `sf` point feature data frame.
+
+```{r}
+sgpools_sf <- st_as_sf(
+  sgpools,
+  coords = c("XCOORD", "YCOORD"),
+  crs = 3414
+)
+
+sgpools_sf
+```
+
+EPSG:3414 refers to the SVY21 / Singapore TM projected coordinate reference system. It is suitable for Singapore local mapping.
+
+### 3.4 Checking geometry information
+
+```{r}
+st_geometry_type(sgpools_sf)
+st_crs(sgpools_sf)
+st_bbox(sgpools_sf)
+```
+
+The output should show that the data is stored as point geometry.
+
+## 4 Teacher Example: Drawing Proportional Symbol Maps
+
+### 4.1 Turning on interactive map mode
+
+```{r}
+tmap_mode("view")
+```
+
+### 4.2 Basic interactive point symbol map
+
+This first map simply shows the locations of Singapore Pools outlets and branches.
+
+```{r}
+tm_shape(sgpools_sf) +
+  tm_bubbles(
+    fill = "red",
+    size = 1,
+    col = "black",
+    lwd = 1
+  )
+```
+
+### 4.3 Proportional symbol map by winnings
+
+The next map uses symbol size to represent the number of Group 1 and Group 2 winnings.
+
+```{r}
+tm_shape(sgpools_sf) +
+  tm_bubbles(
+    fill = "red",
+    size = "Gp1Gp2 Winnings",
+    col = "black",
+    lwd = 1
+  )
+```
+
+### 4.4 Proportional symbol map with outlet type colour
+
+This version improves the map by using colour to distinguish outlet types.
+
+```{r}
+tm_shape(sgpools_sf) +
+  tm_bubbles(
+    fill = "OUTLET TYPE",
+    size = "Gp1Gp2 Winnings",
+    col = "black",
+    lwd = 1
+  )
+```
+
+### 4.5 Faceted proportional symbol map
+
+The teacher example also demonstrates that `tmap` view mode can work with faceted maps.
+
+```{r}
+tm_shape(sgpools_sf) +
+  tm_bubbles(
+    fill = "OUTLET TYPE",
+    size = "Gp1Gp2 Winnings",
+    col = "black",
+    lwd = 1
+  ) +
+  tm_facets(
+    by = "OUTLET TYPE",
+    nrow = 1,
+    sync = TRUE
+  )
+```
+
+### 4.6 Returning to plot mode
+
+```{r}
+tmap_mode("plot")
+```
+
+## 5 Self Trying: Exploring Winning Intensity of Singapore Pools Outlets
+
+In this self-trying section, I use the same geospatial point data, but the analysis focus is different from the teacher example. Instead of only mapping all outlets, I try to identify where high-winning outlets are located and whether branches and outlets show different spatial patterns.
+
+### 5.1 Preparing analysis variables
+
+I first create several variables that make the analysis easier to read. I classify outlets into winning intensity groups and also identify whether an outlet has no Group 1 or Group 2 winnings.
+
+```{r}
+sgpools_self <- sgpools_sf %>%
+  mutate(
+    winnings = `Gp1Gp2 Winnings`,
+    win_status = if_else(winnings == 0, "No winnings", "At least one winning"),
+    win_class = case_when(
+      winnings == 0 ~ "0",
+      winnings <= 10 ~ "1-10",
+      winnings <= 25 ~ "11-25",
+      winnings <= 50 ~ "26-50",
+      TRUE ~ "Above 50"
+    ),
+    win_class = factor(
+      win_class,
+      levels = c("0", "1-10", "11-25", "26-50", "Above 50")
+    )
+  )
+
+sgpools_self
+```
+
+### 5.2 Summary of outlet type and winnings
+
+Before drawing the map, I summarise the number of outlets and winnings by outlet type.
+
+```{r}
+outlet_summary <- sgpools_self %>%
+  st_drop_geometry() %>%
+  group_by(`OUTLET TYPE`) %>%
+  summarise(
+    outlets = n(),
+    total_winnings = sum(winnings, na.rm = TRUE),
+    average_winnings = mean(winnings, na.rm = TRUE),
+    zero_winning_outlets = sum(winnings == 0, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+outlet_summary
+```
+
+```{r}
+DT::datatable(
+  outlet_summary,
+  rownames = FALSE,
+  options = list(
+    pageLength = 10,
+    autoWidth = TRUE
+  )
+)
+```
+
+### 5.3 Bar chart of winnings by outlet type
+
+This chart complements the map by comparing the total number of Group 1 and Group 2 winnings by outlet type.
+
+```{r}
+outlet_summary %>%
+  ggplot(aes(x = `OUTLET TYPE`, y = total_winnings, fill = `OUTLET TYPE`)) +
+  geom_col(width = 0.65) +
+  geom_text(aes(label = total_winnings), vjust = -0.3, size = 3.5) +
+  labs(
+    title = "Total Group 1 and Group 2 Winnings by Outlet Type",
+    x = NULL,
+    y = "Total winnings"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+### 5.4 Self Trying Map 1: Winning intensity map
+
+This map uses both colour and size. Colour shows the winning intensity class, while symbol size represents the actual number of winnings.
+
+```{r}
+tmap_mode("view")
+
+win_palette <- c(
+  "0" = "grey75",
+  "1-10" = "#a6cee3",
+  "11-25" = "#1f78b4",
+  "26-50" = "#fb9a99",
+  "Above 50" = "#e31a1c"
+)
+
+tm_shape(sgpools_self) +
+  tm_bubbles(
+    fill = "win_class",
+    size = "winnings",
+    col = "black",
+    lwd = 0.6,
+    fill.scale = tm_scale_categorical(values = win_palette),
+    fill.legend = tm_legend(title = "Winning class"),
+    size.legend = tm_legend(title = "Winnings")
+  )
+```
+
+### 5.5 Self Trying Map 2: High-winning outlets only
+
+The next map focuses only on outlets with more than 50 winnings. This makes it easier to see where the strongest winning locations are located.
+
+```{r}
+high_winning <- sgpools_self %>%
+  filter(winnings > 50)
+
+high_winning
+```
+
+```{r}
+tm_shape(high_winning) +
+  tm_bubbles(
+    fill = "OUTLET TYPE",
+    size = "winnings",
+    col = "black",
+    lwd = 0.8,
+    size.legend = tm_legend(title = "Winnings"),
+    fill.legend = tm_legend(title = "Outlet type")
+  )
+```
+
+### 5.6 Self Trying Map 3: Zero-winning versus winning outlets
+
+This map compares outlets with no winnings and outlets with at least one winning. It helps to show whether zero-winning outlets are spatially concentrated or spread across Singapore.
+
+```{r}
+tm_shape(sgpools_self) +
+  tm_bubbles(
+    fill = "win_status",
+    size = 0.7,
+    col = "black",
+    lwd = 0.4,
+    fill.legend = tm_legend(title = "Winning status")
+  )
+```
+
+### 5.7 Faceted map by winning class
+
+This small multiple map separates outlets by winning intensity. Compared with a single crowded map, the faceted version makes it easier to compare low-, medium-, and high-winning outlets.
+
+```{r}
+tm_shape(sgpools_self) +
+  tm_bubbles(
+    fill = "win_class",
+    size = "winnings",
+    col = "black",
+    lwd = 0.5,
+    fill.scale = tm_scale_categorical(values = win_palette)
+  ) +
+  tm_facets(
+    by = "win_class",
+    nrow = 1,
+    sync = TRUE
+  )
+```
+
+### 5.8 Top 15 winning outlets
+
+The table below lists the top 15 outlets by Group 1 and Group 2 winnings.
+
+```{r}
+top15_winning <- sgpools_self %>%
+  st_drop_geometry() %>%
+  arrange(desc(winnings)) %>%
+  select(
+    NAME,
+    ADDRESS,
+    POSTCODE,
+    `OUTLET TYPE`,
+    winnings,
+    win_class
+  ) %>%
+  slice_head(n = 15)
+
+DT::datatable(
+  top15_winning,
+  rownames = FALSE,
+  options = list(
+    pageLength = 15,
+    autoWidth = TRUE
+  )
+)
+```
+
+### 5.9 Interpretation
+
+From the self-trying maps, I can compare three aspects of the point data. First, the proportional symbol map shows that a small number of outlets have much higher winning counts than most outlets. Second, mapping only high-winning outlets reduces visual clutter and makes spatial concentration easier to observe. Third, comparing zero-winning and winning outlets shows whether low-performing outlets are randomly distributed or appear in certain areas. The faceted map further improves readability by separating outlets into different winning classes.
+
+```{r}
+tmap_mode("plot")
+```
