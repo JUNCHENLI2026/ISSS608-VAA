@@ -1,0 +1,740 @@
+---
+title: "Hands-on Exercise 10: Information Dashboard Design with R"
+author: "JUNCHEN LI"
+date: "June 23, 2026"
+date-modified: "last-modified"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    code-tools: true
+execute:
+  warning: false
+  message: false
+  freeze: false
+---
+
+# Overview
+
+This hands-on exercise follows Chapter 31, **Information Dashboard Design: R methods**. The teacher example demonstrates how to create compact dashboard-style reports with bullet charts, sparklines, `gt`, `gtExtras`, `reactable`, and `reactablefmtr`.
+
+The self-trying section follows the same workflow, but adds my own dashboard question:
+
+> Which Coffee Chain products are under target, unstable, or high priority for management attention?
+
+# 1 Getting Started
+
+## 1.1 Installing and loading packages
+
+```{r}
+pacman::p_load(
+  lubridate,
+  ggthemes,
+  reactable,
+  reactablefmtr,
+  gt,
+  gtExtras,
+  tidyverse,
+  ggrepel,
+  scales
+)
+```
+
+# 2 Teacher Example: Importing Microsoft Access Database
+
+## 2.1 Importing database into R
+
+The original teacher example imports the Coffee Chain database from a Microsoft Access `.mdb` file. This step may require a 32-bit R environment, so the code is kept as reference and not evaluated.
+
+```{r, eval=FALSE}
+library(RODBC)
+con <- odbcConnectAccess2007("data/Coffee Chain.mdb")
+coffeechain <- sqlFetch(con, "CoffeeChain Query")
+write_rds(coffeechain, "data/rds/CoffeeChain.rds")
+odbcClose(con)
+```
+
+## 2.2 Importing prepared RDS data
+
+The code below reads the prepared Coffee Chain data. If the RDS file is not available, a small synthetic Coffee Chain-like data set is created so that the file can still render.
+
+```{r}
+if (file.exists("data/rds/CoffeeChain.rds")) {
+  coffeechain <- read_rds("data/rds/CoffeeChain.rds")
+} else {
+  set.seed(1234)
+  dir.create("data/rds", recursive = TRUE, showWarnings = FALSE)
+  product_names <- c(
+    "Amaretto", "Caffe Latte", "Caffe Mocha", "Chamomile",
+    "Colombian", "Darjeeling", "Decaf Espresso", "Decaf Irish Cream",
+    "Earl Grey", "Green Tea", "Lemon", "Mint", "Regular Espresso"
+  )
+  coffeechain <- expand_grid(
+    Date = seq.Date(as.Date("2012-01-01"), as.Date("2013-12-01"), by = "month"),
+    Product = product_names
+  ) %>%
+    mutate(
+      `Product Type` = case_when(
+        str_detect(Product, "Caffe|Espresso") ~ "Coffee",
+        str_detect(Product, "Tea|Chamomile|Darjeeling|Earl|Mint|Lemon") ~ "Tea",
+        TRUE ~ "Other"
+      ),
+      base_sales = case_when(
+        Product %in% c("Colombian", "Lemon", "Caffe Mocha") ~ 5000,
+        Product %in% c("Chamomile", "Darjeeling", "Decaf Espresso") ~ 3200,
+        TRUE ~ 1500
+      ),
+      seasonal = 1 + 0.12 * sin(2 * pi * month(Date) / 12),
+      Sales = round(base_sales * seasonal + rnorm(n(), 0, 180)),
+      `Budget Sales` = round(base_sales * runif(n(), 0.95, 1.15))
+    ) %>%
+    select(Date, Product, `Product Type`, Sales, `Budget Sales`)
+  write_rds(coffeechain, "data/rds/CoffeeChain.rds")
+}
+```
+
+```{r}
+glimpse(coffeechain)
+```
+
+# 3 Teacher Example: Bullet Chart with ggplot2
+
+## 3.1 Data preparation
+
+```{r}
+product <- coffeechain %>%
+  group_by(Product) %>%
+  summarise(
+    target = sum(`Budget Sales`, na.rm = TRUE),
+    current = sum(Sales, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+product
+```
+
+## 3.2 Bullet chart in ggplot2
+
+```{r}
+ggplot(product, aes(Product, current)) +
+  geom_col(aes(Product, max(target) * 1.01), fill = "grey85", width = 0.85) +
+  geom_col(aes(Product, target * 0.75), fill = "grey60", width = 0.85) +
+  geom_col(aes(Product, target * 0.5), fill = "grey50", width = 0.85) +
+  geom_col(aes(Product, current), width = 0.35, fill = "black") +
+  geom_errorbar(
+    aes(y = target, x = Product, ymin = target, ymax = target),
+    width = 0.4,
+    colour = "red",
+    linewidth = 1
+  ) +
+  coord_flip() +
+  labs(
+    title = "Bullet Chart of Sales against Budgeted Sales",
+    x = NULL,
+    y = "Sales"
+  ) +
+  theme_minimal()
+```
+
+# 4 Teacher Example: Plotting Sparklines with ggplot2
+
+## 4.1 Preparing monthly sales report
+
+```{r}
+sales_report <- coffeechain %>%
+  filter(Date >= as.Date("2013-01-01")) %>%
+  mutate(Month = month(Date)) %>%
+  group_by(Month, Product) %>%
+  summarise(Sales = sum(Sales, na.rm = TRUE), .groups = "drop") %>%
+  select(Month, Product, Sales)
+
+mins <- sales_report %>%
+  group_by(Product) %>%
+  slice_min(Sales, n = 1, with_ties = FALSE) %>%
+  ungroup()
+
+maxs <- sales_report %>%
+  group_by(Product) %>%
+  slice_max(Sales, n = 1, with_ties = FALSE) %>%
+  ungroup()
+
+ends <- sales_report %>%
+  group_by(Product) %>%
+  filter(Month == max(Month)) %>%
+  ungroup()
+
+quarts <- sales_report %>%
+  group_by(Product) %>%
+  summarise(
+    quart1 = quantile(Sales, 0.25, na.rm = TRUE),
+    quart2 = quantile(Sales, 0.75, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  right_join(sales_report, by = "Product")
+```
+
+## 4.2 Sparklines in ggplot2
+
+```{r, fig.height=8}
+ggplot(sales_report, aes(x = Month, y = Sales)) +
+  facet_grid(Product ~ ., scales = "free_y") +
+  geom_ribbon(data = quarts, aes(ymin = quart1, ymax = quart2), fill = "grey90") +
+  geom_line(linewidth = 0.3) +
+  geom_point(data = mins, colour = "red") +
+  geom_point(data = maxs, colour = "blue") +
+  geom_text(data = mins, aes(label = Sales), vjust = -1, size = 2) +
+  geom_text(data = maxs, aes(label = Sales), vjust = 2.5, size = 2) +
+  geom_text(data = ends, aes(label = Sales), hjust = 0, nudge_x = 0.5, size = 2) +
+  geom_text(data = ends, aes(label = Product), hjust = 0, nudge_x = 1.0, size = 2) +
+  expand_limits(x = max(sales_report$Month) + 2) +
+  scale_x_continuous(breaks = seq(1, 12, 1)) +
+  scale_y_continuous(expand = c(0.1, 0)) +
+  theme_tufte(base_size = 8) +
+  theme(
+    axis.title = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks = element_blank(),
+    strip.text = element_blank()
+  )
+```
+
+# 5 Teacher Example: Static Dashboard with gt and gtExtras
+
+## 5.1 Simple bullet chart in gt
+
+```{r}
+product %>%
+  gt::gt() %>%
+  gt_plt_bullet(
+    column = current,
+    target = target,
+    width = 60,
+    palette = c("lightblue", "black")
+  ) %>%
+  gt_theme_538()
+```
+
+# 6 Teacher Example: Sparklines with gtExtras
+
+## 6.1 Preparing report data
+
+```{r}
+report <- coffeechain %>%
+  mutate(Year = year(Date)) %>%
+  filter(Year == 2013) %>%
+  mutate(Month = month(Date, label = TRUE, abbr = TRUE)) %>%
+  group_by(Product, Month) %>%
+  summarise(Sales = sum(Sales, na.rm = TRUE), .groups = "drop")
+```
+
+## 6.2 Creating list column for monthly sales
+
+```{r}
+report %>%
+  group_by(Product) %>%
+  summarise(`Monthly Sales` = list(Sales), .groups = "drop")
+```
+
+## 6.3 Plotting Coffee Chain sales report
+
+```{r}
+report %>%
+  group_by(Product) %>%
+  summarise(`Monthly Sales` = list(Sales), .groups = "drop") %>%
+  gt() %>%
+  gt_plt_sparkline(`Monthly Sales`, same_limit = FALSE)
+```
+
+## 6.4 Adding statistics
+
+```{r}
+report %>%
+  group_by(Product) %>%
+  summarise(
+    Min = min(Sales, na.rm = TRUE),
+    Max = max(Sales, na.rm = TRUE),
+    Average = mean(Sales, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  gt() %>%
+  fmt_number(columns = c(Min, Max, Average), decimals = 2)
+```
+
+## 6.5 Combining the data frame
+
+```{r}
+spark <- report %>%
+  group_by(Product) %>%
+  summarise(`Monthly Sales` = list(Sales), .groups = "drop")
+
+sales <- report %>%
+  group_by(Product) %>%
+  summarise(
+    Min = min(Sales, na.rm = TRUE),
+    Max = max(Sales, na.rm = TRUE),
+    Average = mean(Sales, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+sales_data <- left_join(sales, spark, by = "Product")
+sales_data
+```
+
+## 6.6 Plotting the updated data table
+
+```{r}
+sales_data %>%
+  gt() %>%
+  gt_plt_sparkline(`Monthly Sales`, same_limit = FALSE) %>%
+  gt_theme_538()
+```
+
+## 6.7 Combining bullet chart and sparklines
+
+```{r}
+bullet <- coffeechain %>%
+  filter(Date >= as.Date("2013-01-01")) %>%
+  group_by(Product) %>%
+  summarise(
+    Target = sum(`Budget Sales`, na.rm = TRUE),
+    Actual = sum(Sales, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+sales_data <- sales_data %>%
+  left_join(bullet, by = "Product")
+```
+
+```{r}
+sales_data %>%
+  gt() %>%
+  gt_plt_sparkline(`Monthly Sales`) %>%
+  gt_plt_bullet(
+    column = Actual,
+    target = Target,
+    width = 28,
+    palette = c("lightblue", "black")
+  ) %>%
+  gt_theme_538()
+```
+
+# 7 Teacher Example: Interactive Dashboard with reactable
+
+## 7.1 Preparing list-column data
+
+```{r}
+react_report <- report %>%
+  group_by(Product) %>%
+  summarise(`Monthly Sales` = list(Sales), .groups = "drop")
+```
+
+## 7.2 Basic interactive table
+
+```{r}
+light_reactable_theme <- reactableTheme(
+  color = "#222222",
+  backgroundColor = "#ffffff",
+  borderColor = "#dddddd",
+  stripedColor = "#f7f7f7",
+  highlightColor = "#f1f5f9",
+  cellPadding = "8px 10px",
+  style = list(
+    fontFamily = "Arial, sans-serif",
+    fontSize = "13px"
+  ),
+  headerStyle = list(
+    backgroundColor = "#f2f2f2",
+    color = "#111111",
+    fontWeight = "bold"
+  ),
+  searchInputStyle = list(
+    backgroundColor = "#ffffff",
+    color = "#222222",
+    border = "1px solid #cccccc"
+  )
+)
+```
+
+```{r}
+reactable(
+  react_report,
+  searchable = TRUE,
+  defaultPageSize = 13,
+  bordered = TRUE,
+  striped = TRUE,
+  highlight = TRUE,
+  theme = light_reactable_theme,
+  columns = list(
+    Product = colDef(
+      maxWidth = 220,
+      style = list(color = "#222222")
+    ),
+    `Monthly Sales` = colDef(
+      minWidth = 420,
+      style = list(color = "#222222"),
+      cell = function(value) {
+        paste(round(unlist(value), 0), collapse = ", ")
+      }
+    )
+  )
+)
+```
+
+## 7.3 Interactive sparkline if dataui is available
+
+The teacher example uses `dataui::react_sparkline()`. Because `dataui` is normally installed from GitHub, this chunk checks whether it is available first.
+
+```{r}
+if (requireNamespace("dataui", quietly = TRUE)) {
+  
+  library(dataui)
+  
+  reactable(
+    react_report,
+    searchable = TRUE,
+    defaultPageSize = 13,
+    bordered = TRUE,
+    striped = TRUE,
+    highlight = TRUE,
+    theme = light_reactable_theme,
+    columns = list(
+      Product = colDef(
+        maxWidth = 220,
+        style = list(color = "#222222")
+      ),
+      `Monthly Sales` = colDef(
+        minWidth = 420,
+        style = list(color = "#222222"),
+        cell = dataui::react_sparkline(
+          react_report,
+          highlight_points = dataui::highlight_points(
+            min = "red",
+            max = "blue"
+          ),
+          statline = "mean"
+        )
+      )
+    )
+  )
+  
+} else {
+  
+  reactable(
+    react_report,
+    searchable = TRUE,
+    defaultPageSize = 13,
+    bordered = TRUE,
+    striped = TRUE,
+    highlight = TRUE,
+    theme = light_reactable_theme,
+    columns = list(
+      Product = colDef(
+        maxWidth = 220,
+        style = list(color = "#222222")
+      ),
+      `Monthly Sales` = colDef(
+        minWidth = 420,
+        style = list(color = "#222222"),
+        cell = function(value) {
+          paste(round(unlist(value), 0), collapse = ", ")
+        }
+      )
+    )
+  )
+}
+```
+
+# 8 Self Trying: Product Performance Dashboard
+
+In this self-trying section, I use the same dashboard-building techniques from the teacher example, but I focus on product performance management. Instead of only displaying sales and budget, I create extra indicators to identify products that are below target or unstable across months.
+
+## 8.1 Creating product performance indicators
+
+```{r}
+self_product <- coffeechain %>%
+  mutate(
+    Year = year(Date),
+    Month = month(Date)
+  ) %>%
+  filter(Year == 2013) %>%
+  group_by(Product) %>%
+  summarise(
+    Actual = sum(Sales, na.rm = TRUE),
+    Target = sum(`Budget Sales`, na.rm = TRUE),
+    Average_Monthly_Sales = mean(Sales, na.rm = TRUE),
+    Sales_SD = sd(Sales, na.rm = TRUE),
+    Best_Month = Month[which.max(Sales)],
+    Worst_Month = Month[which.min(Sales)],
+    .groups = "drop"
+  ) %>%
+  mutate(
+    Achievement = Actual / Target,
+    Gap = Actual - Target,
+    Volatility = Sales_SD / Average_Monthly_Sales,
+    Status = case_when(
+      Achievement >= 1.05 ~ "Above target",
+      Achievement >= 0.95 ~ "Near target",
+      TRUE ~ "Below target"
+    ),
+    Status = factor(Status, levels = c("Above target", "Near target", "Below target"))
+  )
+
+self_product
+```
+
+## 8.2 KPI summary cards
+
+```{r}
+kpi_summary <- self_product %>%
+  summarise(
+    `Total Actual Sales` = sum(Actual, na.rm = TRUE),
+    `Total Target Sales` = sum(Target, na.rm = TRUE),
+    `Overall Achievement` = sum(Actual, na.rm = TRUE) / sum(Target, na.rm = TRUE),
+    `Products Below Target` = sum(Status == "Below target")
+  )
+
+kpi_summary %>%
+  gt() %>%
+  fmt_number(columns = c(`Total Actual Sales`, `Total Target Sales`), decimals = 0) %>%
+  fmt_percent(columns = `Overall Achievement`, decimals = 1) %>%
+  tab_header(
+    title = "Coffee Chain Sales Performance Summary",
+    subtitle = "A compact KPI summary for 2013 product performance"
+  ) %>%
+  gt_theme_538()
+```
+
+## 8.3 Performance gap chart
+
+```{r}
+ggplot(self_product, aes(x = reorder(Product, Gap), y = Gap, fill = Status)) +
+  geom_col() +
+  coord_flip() +
+  geom_hline(yintercept = 0, linewidth = 0.4) +
+  labs(
+    title = "Sales Gap by Product",
+    subtitle = "Positive values indicate sales above budgeted target",
+    x = NULL,
+    y = "Actual Sales - Target Sales"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## 8.4 Achievement versus volatility
+
+```{r}
+ggplot(
+  self_product,
+  aes(x = Achievement, y = Volatility, size = Actual, colour = Status, label = Product)
+) +
+  geom_vline(xintercept = 1, linetype = "dashed") +
+  geom_point(alpha = 0.75) +
+  ggrepel::geom_text_repel(size = 3, max.overlaps = 20) +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs(
+    title = "Product Achievement and Sales Volatility",
+    subtitle = "The dashed line shows the target achievement threshold",
+    x = "Achievement ratio",
+    y = "Sales volatility",
+    size = "Actual sales",
+    colour = "Status"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## 8.5 Monthly sales sparkline table
+
+```{r}
+self_monthly <- coffeechain %>%
+  mutate(
+    Year = year(Date),
+    Month = month(Date, label = TRUE, abbr = TRUE)
+  ) %>%
+  filter(Year == 2013) %>%
+  group_by(Product, Month) %>%
+  summarise(Sales = sum(Sales, na.rm = TRUE), .groups = "drop")
+
+self_spark <- self_monthly %>%
+  group_by(Product) %>%
+  summarise(`Monthly Sales` = list(Sales), .groups = "drop")
+
+self_gt <- self_product %>%
+  select(Product, Actual, Target, Achievement, Gap, Status) %>%
+  left_join(self_spark, by = "Product")
+```
+
+```{r}
+self_gt %>%
+  arrange(Achievement) %>%
+  gt() %>%
+  fmt_number(columns = c(Actual, Target, Gap), decimals = 0) %>%
+  fmt_percent(columns = Achievement, decimals = 1) %>%
+  gt_plt_sparkline(`Monthly Sales`, same_limit = FALSE) %>%
+  gt_plt_bullet(
+    column = Actual,
+    target = Target,
+    width = 35,
+    palette = c("lightblue", "black")
+  ) %>%
+  tab_header(
+    title = "Self Trying Dashboard: Product Sales, Target and Monthly Trend",
+    subtitle = "Sorted by achievement ratio to highlight weaker products first"
+  ) %>%
+  gt_theme_538()
+```
+
+## 8.6 Interactive priority table
+
+```{r}
+priority_table <- self_product %>%
+  mutate(
+    Priority = case_when(
+      Status == "Below target" & Volatility > median(Volatility, na.rm = TRUE) ~ "High priority",
+      Status == "Below target" ~ "Medium priority",
+      TRUE ~ "Monitor"
+    )
+  ) %>%
+  arrange(
+    desc(Priority == "High priority"),
+    Achievement
+  )
+
+reactable(
+  priority_table,
+  searchable = TRUE,
+  defaultPageSize = 13,
+  bordered = TRUE,
+  striped = TRUE,
+  highlight = TRUE,
+  theme = reactableTheme(
+    color = "#222222",
+    backgroundColor = "#ffffff",
+    borderColor = "#dddddd",
+    stripedColor = "#f7f7f7",
+    highlightColor = "#f1f5f9",
+    cellPadding = "8px 10px",
+    style = list(
+      fontFamily = "Arial, sans-serif",
+      fontSize = "13px"
+    ),
+    headerStyle = list(
+      backgroundColor = "#f2f2f2",
+      color = "#111111",
+      fontWeight = "bold"
+    ),
+    searchInputStyle = list(
+      backgroundColor = "#ffffff",
+      color = "#222222",
+      border = "1px solid #cccccc"
+    )
+  ),
+  columns = list(
+    Product = colDef(
+      name = "Product",
+      minWidth = 180,
+      style = list(color = "#222222")
+    ),
+    Actual = colDef(
+      name = "Actual Sales",
+      minWidth = 110,
+      align = "right",
+      format = colFormat(separators = TRUE, digits = 0),
+      style = list(color = "#222222")
+    ),
+    Target = colDef(
+      name = "Target Sales",
+      minWidth = 110,
+      align = "right",
+      format = colFormat(separators = TRUE, digits = 0),
+      style = list(color = "#222222")
+    ),
+    Average_Monthly_Sales = colDef(
+      name = "Avg Monthly Sales",
+      minWidth = 140,
+      align = "right",
+      format = colFormat(separators = TRUE, digits = 0),
+      style = list(color = "#222222")
+    ),
+    Sales_SD = colDef(
+      name = "Sales SD",
+      minWidth = 110,
+      align = "right",
+      format = colFormat(separators = TRUE, digits = 0),
+      style = list(color = "#222222")
+    ),
+    Best_Month = colDef(
+      name = "Best Month",
+      minWidth = 100,
+      align = "center",
+      style = list(color = "#222222")
+    ),
+    Worst_Month = colDef(
+      name = "Worst Month",
+      minWidth = 100,
+      align = "center",
+      style = list(color = "#222222")
+    ),
+    Achievement = colDef(
+      name = "Achievement",
+      minWidth = 120,
+      align = "right",
+      format = colFormat(percent = TRUE, digits = 1),
+      style = function(value) {
+        if (value < 0.95) {
+          list(background = "#fee0d2", color = "#222222")
+        } else if (value >= 1.05) {
+          list(background = "#deebf7", color = "#222222")
+        } else {
+          list(background = "#f7f7f7", color = "#222222")
+        }
+      }
+    ),
+    Gap = colDef(
+      name = "Sales Gap",
+      minWidth = 110,
+      align = "right",
+      format = colFormat(separators = TRUE, digits = 0),
+      style = function(value) {
+        if (value < 0) {
+          list(color = "#b2182b", fontWeight = "bold")
+        } else {
+          list(color = "#2166ac", fontWeight = "bold")
+        }
+      }
+    ),
+    Volatility = colDef(
+      name = "Volatility",
+      minWidth = 110,
+      align = "right",
+      format = colFormat(percent = TRUE, digits = 1),
+      style = list(color = "#222222")
+    ),
+    Status = colDef(
+      name = "Status",
+      minWidth = 120,
+      style = list(color = "#222222")
+    ),
+    Priority = colDef(
+      name = "Priority",
+      minWidth = 130,
+      style = function(value) {
+        if (value == "High priority") {
+          list(fontWeight = "bold", color = "#b2182b")
+        } else if (value == "Medium priority") {
+          list(fontWeight = "bold", color = "#ef8a62")
+        } else {
+          list(color = "#4d4d4d")
+        }
+      }
+    )
+  )
+)
+```
+
+## 8.7 Interpretation
+
+The self-trying dashboard combines three types of performance evidence. The bullet chart compares actual sales with budgeted sales, the sparkline shows monthly movement, and the priority table highlights products that are below target or volatile. This design is more useful than a single chart because it supports both high-level monitoring and product-level diagnosis.
